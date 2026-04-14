@@ -35,27 +35,27 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "site",
     name: "אתר + מערכת מנויים",
-    subtitle: "פלטפורמה אחת שמחליפה 5 כלים שונים.",
-    description: "אתר סיפורון מלא: ארכיון 200+ סיפורים עם player, אזור אישי למנויים (סטטוס, תשלומים, ביטול עצמי), דף הרשמה עם referral מובנה. Supabase = single source of truth. סנכרון דו-כיווני עם Cardcom + Green API.",
-    whyNow: "Skolar + Google Sheets + Fillout = 3 מערכות שלא מדברות אחת עם השנייה. כל שינוי = עבודה ידנית ב-3 מקומות.",
+    subtitle: "פלטפורמה אחת במקום 5 כלים שכל אחד מושך לכיוון אחר.",
+    description: "אתר סיפורון מלא: ארכיון 200+ סיפורים עם player, אזור אישי למנויים (סטטוס, תשלומים, ביטול עצמי), דף הרשמה עם referral מובנה. Supabase = מקום אחד לכל המידע. סנכרון דו-כיווני עם Cardcom + Green API.",
+    whyNow: "Skolar + Google Sheets + Fillout = 3 מערכות שלא מדברות אחת עם השנייה. כל שינוי = עבודה ידנית ב-3 מקומות. זה לא יחזיק.",
     originalPrice: 12000, weeks: 6, icon: Globe, category: "core",
     impact: "תשתית לכל השאר", replaces: "Skolar + Fillout + Google Sheets",
   },
   {
     id: "automation",
     name: "אוטומציית ביטול + Dunning",
-    subtitle: "108 מנויים עזבו בשקט. בלי שידענו. בלי שנלחמנו.",
-    description: "מערכת אוטומטית שמטפלת בכל ביטול: קריאת Gmail של מנחם → ביטול ב-Cardcom + WhatsApp קבוצה + תפוצה → הודעת פרידה עם סקר סיבה → שמירה ב-Supabase → הפצה למחלקות. כולל dunning: כשכרטיס אשראי לא עובר → הודעה ללקוח → תזכורת אחרי 3 ימים → סימון אחרי 7.",
-    whyNow: "כל חודש 40-70 אנשים מפסיקים לשלם בשקט. אין exit survey, אין dunning, אין ניסיון להחזיר. כסף שזורם החוצה.",
+    subtitle: "108 מנויים עזבו בשקט. בלי שידענו. בלי שנלחמנו על אף אחד.",
+    description: "מערכת אוטומטית שמטפלת בכל ביטול: קריאת Gmail של מנחם → ביטול ב-Cardcom + WhatsApp קבוצה + תפוצה → הודעת פרידה עם סקר סיבה → שמירה ב-Supabase → הפצה למחלקות. כולל dunning: כשכרטיס אשראי לא עובר → הודעה למנוי → תזכורת אחרי 3 ימים → סימון אחרי 7.",
+    whyNow: "כל חודש 40-70 אנשים מפסיקים לשלם בשקט. אין סקר יציאה, אין dunning, אין ניסיון להחזיר. כסף שזורם החוצה.",
     originalPrice: 4000, weeks: 2, icon: Zap, category: "core",
-    impact: "חיסכון ~60 ביטולים שקטים/חודש", replaces: "עבודה ידנית × 3 מערכות",
+    impact: "עוצרים ~60 ביטולים שקטים בחודש", replaces: "עבודה ידנית × 3 מערכות",
   },
   {
     id: "dashboard",
     name: "דשבורד + קבוצת WhatsApp יומית",
-    subtitle: "היום אתה מנהל עסק של ₪45K בלי לדעת מה קורה בו.",
-    description: "דשבורד אוטומטי עם כל הנתונים מיום 1: הכנסות מ-Cardcom, כניסות מהבוט, גדלי קבוצות מ-Green API. התראות real-time על כשלי אשראי, churn, ו-Flywheel שנעצר. כל בוקר ב-08:00 — סיכום יומי נשלח לקבוצת WhatsApp ייעודית דרך Green API.",
-    whyNow: "בשביל לקבל את הנתונים שהצגתי לך היום — הייתי צריך לשלוף ידנית מ-3 APIs שונים. עם דשבורד, זה יגיע לבד כל בוקר.",
+    subtitle: "מנחם, אתה מנהל עסק של ₪45K בלי לדעת מה קורה בו. זה חייב להשתנות.",
+    description: "דשבורד אוטומטי עם כל הנתונים מיום 1: הכנסות מ-Cardcom, כניסות מהבוט, גדלי קבוצות מ-Green API. התראות על כשלי אשראי, נטישה, ו-Flywheel שנעצר. כל בוקר ב-08:00 — סיכום יומי נשלח לקבוצת WhatsApp ייעודית דרך Green API.",
+    whyNow: "בשביל לקבל את הנתונים שהצגתי לך — הייתי צריך לשלוף ידנית מ-3 APIs שונים. עם דשבורד, זה יגיע לבד כל בוקר.",
     originalPrice: 3500, weeks: 2, icon: BarChart3, category: "core",
     impact: "0 החלטות מתחושת בטן", replaces: "בדיקה ידנית בכל מערכת",
   },
@@ -64,17 +64,17 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "campaign-flight",
     name: "קמפיין כרטיס טיסה לאירופה",
-    subtitle: "ה-Flywheel עומד כבר 6 שבועות. צריך להתניע עכשיו.",
+    subtitle: "ה-Flywheel עומד כבר 6 שבועות. יאללה, מתניעים.",
     description: "תכנון מלא של קמפיין שיתופים: פתיחת קבוצה 19, הגדרת בוט עם לינק אישי, גיוס שותפים עסקיים לפרסים, ניהול הקמפיין, ודוח תוצאות מפורט.",
-    whyNow: "באפריל נכנסו רק 5 אנשים לבוט. בקמפיין תשעה באב נכנסו 2,752. ההבדל = קמפיין.",
+    whyNow: "באפריל נכנסו רק 5 אנשים לבוט. בקמפיין תשעה באב נכנסו 2,752. ההבדל = קמפיין. פגזזזזז.",
     originalPrice: 2000, weeks: 1, icon: Megaphone, category: "growth",
-    impact: "500-2,000 חברים חדשים", replaces: "Flywheel עומד",
+    impact: "500-2,000 משפחות חדשות", replaces: "Flywheel עומד",
   },
   {
     id: "bot",
     name: "מערכת בוט חדשה (מחליפה Chatrace)",
-    subtitle: "בוט שמודד, מחובר לפייסבוק, ומעדכן לינקים לבד.",
-    description: "מערכת בוט מלאה: חיבור לפייסבוק, לינק אישי לכל חבר, מדידה מלאה (מי הפנה, כמה נרשמו, ROI), הודעות בתשלום כשצריך. כשנפתחת קבוצה חדשה — כל הלינקים בכל ההודעות מתעדכנים אוטומטית.",
+    subtitle: "בוט שמודד, מחובר לפייסבוק, ומעדכן לינקים לבד. סגור.",
+    description: "מערכת בוט מלאה: חיבור לפייסבוק, לינק אישי לכל חבר, מדידה מלאה (מי הפנה, כמה נרשמו), הודעות בתשלום כשצריך. כשנפתחת קבוצה חדשה — כל הלינקים בכל ההודעות מתעדכנים אוטומטית.",
     whyNow: "Chatrace לא נותנת מדידה מספיקה ואין עדכון לינקים אוטומטי. כל קבוצה חדשה = עדכון ידני בעשרות מקומות.",
     originalPrice: 5000, weeks: 3, icon: Bot, category: "growth",
     impact: "Flywheel אוטומטי", replaces: "Chatrace + עדכון ידני",
@@ -82,16 +82,16 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "evergreen",
     name: "Evergreen Referral — בוט שלא נסגר",
-    subtitle: "היום הבוט סגור בין קמפיינים. 5 כניסות ביום. זה פשע.",
+    subtitle: "היום הבוט סגור בין קמפיינים. 5 כניסות ביום. זה פשע נגד העשייה.",
     description: "בוט referral שפתוח 24/7, כל חודש עם פרס אחר. כל חבר בקהילה יכול תמיד לשתף ולהרוויח. כשנפתחת קבוצה חדשה — הלינקים מתעדכנים אוטומטית בכל מקום.",
-    whyNow: "בין קמפיינים — 5 כניסות ביום. עם Evergreen — 150-300. ההבדל = ₪0 השקעה, רק שהבוט פתוח.",
+    whyNow: "בין קמפיינים — 5 כניסות ביום. עם Evergreen — 150-300. ההבדל = ₪0 השקעה, רק שהבוט פתוח. להגיע לעוד משפחות ועוד ילדים.",
     originalPrice: 2500, weeks: 1, icon: Repeat, category: "growth",
     impact: "150-300 כניסות/חודש במקום 5", replaces: "בוט שנסגר בין קמפיינים",
   },
   {
     id: "campaign-system",
     name: "מערכת קמפיינים + לוח שנה",
-    subtitle: "12 חודשים מתוכננים מראש. אפס חודשים ריקים.",
+    subtitle: "12 חודשים מתוכננים מראש. אפס חודשים ריקים. גל!!! גלללללל!",
     description: "לוח שנה שנתי שמתואם לחגים יהודיים (חופש גדול, תשרי, חנוכה, פורים). תבנית מוכנה לכל סוג קמפיין (A-E). טריגרים אוטומטיים: קבוצה בשלה? התראה. אין קמפיין מתוכנן? התראה.",
     whyNow: "הקמפיינים עד היום היו ספונטניים. לפעמים 7 קבוצות בחודש, לפעמים 0. צריך מערכת שלא שוכחת.",
     originalPrice: 3000, weeks: 2, icon: CalendarCheck, category: "growth",
@@ -99,48 +99,48 @@ const ALL_PROJECTS: Project[] = [
   },
   {
     id: "winback",
-    name: "Win-back Campaign",
-    subtitle: "417 אנשים ששילמו לנו כסף ונעלמו. יש לנו את הטלפון שלהם.",
+    name: "Win-back — להחזיר את מי שעזב",
+    subtitle: "417 אנשים ששילמו לנו ונעלמו. יש לנו את הטלפון שלהם. יאללה.",
     description: "108 מנויים שעזבו אחרי ששילמו 45₪ + 309 שלא המירו מ-5₪. לכל אחד יש שם, טלפון, ומייל מ-Cardcom. נשלח הודעת WhatsApp אישית ממוקדת: מי שעזב בגלל מחיר → הצעה מיוחדת. מי שלא המיר → תזכורת עם סיפור טעימה.",
-    whyNow: "הלידים קרים ככל שעובר זמן. כל יום שעובר = פחות סיכוי להחזיר אותם.",
+    whyNow: "המשפחות האלה כבר הכירו את סיפורון. כל יום שעובר = פחות סיכוי להחזיר אותם.",
     originalPrice: 1500, weeks: 1, icon: Users, category: "growth",
-    impact: "הכנסה מיידית מלידים קיימים", replaces: "417 לידים שיושבים",
+    impact: "הכנסה מיידית ממשפחות קיימות", replaces: "417 משפחות שיושבות",
   },
 
   // ── Content & Experience ──
   {
     id: "onboarding",
     name: "פלאו ברוכים הבאים חכם",
-    subtitle: "במקום בלוק טקסט ענק — סדרת הודעות שבונה חיבור.",
-    description: "מנוי חדש מקבל סדרת הודעות מפוזרות: מיידי → הסיפור הראשון (אחרי שעה) → טיפ ליום 2 → שאלה ביום 7. תגובות חוזרות למערכת לאיסוף data. חוויית כניסה שמרגישה אישית.",
+    subtitle: "במקום בלוק טקסט ענק — סדרת הודעות שבונה חיבור. נוגע בלב.",
+    description: "מנוי חדש מקבל סדרת הודעות מפוזרות: מיידי → הסיפור הראשון (אחרי שעה) → טיפ ליום 2 → שאלה ביום 7. תגובות חוזרות למערכת. חוויית כניסה שמרגישה אישית.",
     whyNow: "37% מהעוזבים עוזבים אחרי חודש 1. חוויית כניסה טובה = הסיכוי הכי גדול לשמור אותם.",
     originalPrice: 2000, weeks: 1, icon: Send, category: "content",
-    impact: "retention גבוה יותר בחודש 1", replaces: "בלוק טקסט מסורבל",
+    impact: "שימור גבוה יותר בחודש 1", replaces: "בלוק טקסט מסורבל",
   },
   {
     id: "birthday",
     name: "ברכות יום הולדת אישיות",
-    subtitle: "ה-data כבר קיים. תאריכי לידה עבריים מ-Fillout.",
-    description: "כל ילד של מנוי מקבל ברכת יום הולדת אישית: הקלטה מיוחדת ממנחם + הפתעה. WOW effect שגורם להורים לשתף. אפשרות ל-premium feature בתשלום.",
-    whyNow: "ה-data קיים — רק צריך לבנות את האוטומציה. ROI גבוה על השקעה קטנה.",
+    subtitle: "תאריכי לידה עבריים כבר קיימים מ-Fillout. רק צריך להצית את הניצוץ.",
+    description: "כל ילד של מנוי מקבל ברכת יום הולדת אישית: הקלטה מיוחדת ממנחם + הפתעה. אפקט וואו שגורם להורים לשתף. אפשרות לפיצ׳ר בתשלום.",
+    whyNow: "הנתונים קיימים — רק צריך לבנות את האוטומציה. השקעה קטנה, אימפקט ענק על המשפחות.",
     originalPrice: 2500, weeks: 1, icon: Gift, category: "content",
-    impact: "WOW + שיתופים אורגניים", replaces: "אין — פיצ'ר חדש",
+    impact: "וואו + שיתופים אורגניים", replaces: "אין — פיצ׳ר חדש",
   },
   {
     id: "renewal-gift",
     name: "פינוק לפני חידוש מנוי",
-    subtitle: "יומיים לפני שיורד החיוב — הפתעה קטנה.",
-    description: "Cardcom API: מי מתחדש בעוד יומיים? אם לא שישי/שבת → שליחת סיפור בונוס או הפתעה. הלקוח מרגיש שחושבים עליו בדיוק ברגע שהוא שוקל לבטל.",
+    subtitle: "יומיים לפני שיורד החיוב — הפתעה קטנה. נוגע בלב של ההורים.",
+    description: "Cardcom API: מי מתחדש בעוד יומיים? אם לא שישי/שבת → שליחת סיפור בונוס או הפתעה. המנוי מרגיש שחושבים עליו בדיוק ברגע שהוא שוקל לבטל.",
     whyNow: "הרבה ביטולים קורים סביב תאריך החידוש. פינוק קטן = ההבדל בין להישאר לעזוב.",
     originalPrice: 1500, weeks: 1, icon: Heart, category: "content",
-    impact: "ירידה ב-churn סביב חידוש", replaces: "חידוש בלי שום תקשורת",
+    impact: "ירידה בנטישה סביב חידוש", replaces: "חידוש בלי שום תקשורת",
   },
   {
     id: "daily-scheduler",
     name: "שידור יומי אוטומטי",
-    subtitle: "סיפור כל יום ב-17:00, בלי שמישהו ילחץ 'שלח'.",
-    description: "מערכת שידור: סיפור יומי למועדון ב-17:00 + סיפור שבועי ל-18 קבוצות חינמיות. הכל מתוזמן מ-Supabase. מנחם מעלה סיפור → המערכת שולחת בזמן הנכון.",
-    whyNow: "שידור ידני לכל הקבוצות = זמן. שכחה = יום בלי סיפור = אכזבה.",
+    subtitle: "סיפור כל יום ב-17:00, בלי שמישהו ילחץ ׳שלח׳. המערכת עושה הכל.",
+    description: "מערכת שידור: סיפור יומי למועדון ב-17:00 + סיפור שבועי ל-18 קבוצות חינמיות. הכל מתוזמן מ-Supabase. מנחם מעלה סיפור → המערכת שולחת בזמן הנכון לכל המשפחות.",
+    whyNow: "שידור ידני לכל הקבוצות = זמן שמנחם צריך לסיפורים. שכחה = יום בלי סיפור = ילדים מאוכזבים.",
     originalPrice: 2000, weeks: 1, icon: Clock, category: "content",
     impact: "0 שידורים ידניים", replaces: "שליחה ידנית כל יום",
   },
@@ -149,45 +149,45 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "shows",
     name: "לשונית הצגות באתר",
-    subtitle: "ערוץ הכנסה חדש — צפייה + מכירה למוסדות.",
+    subtitle: "ערוץ הכנסה חדש — צפייה + מכירה למוסדות. עשייה מבורכת.",
     description: "קטלוג הצגות באתר: צפייה אונליין, הזמנה להצגה חיה. מכירה לגנים ומוסדות (~267₪ להצגה). חיבור ל-Cardcom לתשלום.",
-    whyNow: "מנחם כבר מופיע בהצגות. המכירה ידנית. אתר = סקייל.",
+    whyNow: "מנחם כבר מופיע בהצגות. המכירה ידנית. אתר = להגיע לעוד מוסדות ועוד ילדים.",
     originalPrice: 3500, weeks: 2, icon: Film, category: "future",
     impact: "ערוץ הכנסה חדש", replaces: "מכירה ידנית",
   },
   {
     id: "languages",
     name: "סיפורים באנגלית + צרפתית",
-    subtitle: "2 שווקים חדשים לגמרי. אותו מודל, שפה אחרת.",
+    subtitle: "2 שווקים חדשים לגמרי. אותו מודל, שפה אחרת. גל!!! גלללללל!",
     description: "פתיחת 2 קבוצות היכרות בשפות חדשות. תרגום/הקלטה של סיפורים נבחרים. דף נחיתה בשפה. אותו Flywheel — שוק חדש.",
-    whyNow: "מנחם הציע את זה ב-13.4. יש ביקוש מהקהילות בחו\"ל.",
+    whyNow: "מנחם הציע את זה ב-13.4. יש ביקוש מהקהילות בחו\"ל. להגיע לעוד משפחות ועוד ילדים — גם בשפות אחרות.",
     originalPrice: 4000, weeks: 3, icon: Languages, category: "future",
     impact: "שוק חדש", replaces: "עברית בלבד",
   },
   {
     id: "ai-voice",
     name: "AI בקול מנחם (11Labs)",
-    subtitle: "תוכן בסקייל — בלי שמנחם ישב מול מיקרופון.",
+    subtitle: "תוכן בסקייל — בלי שמנחם ישב מול מיקרופון כל היום.",
     description: "Voice clone של מנחם ב-11Labs. סרטוני הלכות שבת, בין אדם לחברו, תוכן חינוכי. מנחם מאשר, AI מייצר.",
-    whyNow: "צוואר בקבוק = זמן הקלטה של מנחם. AI פותר את זה.",
+    whyNow: "צוואר בקבוק = זמן הקלטה של מנחם. AI פותר את זה. יותר סיפורים = יותר ילדים שנוגעים בהם.",
     originalPrice: 3000, weeks: 2, icon: Mic, category: "future",
     impact: "תוכן אינסופי בקול מנחם", replaces: "רק הקלטות ידניות",
   },
   {
     id: "annual-plan",
     name: "חבילה שנתית + Premium",
-    subtitle: "LTV גבוה יותר. הכנסה צפויה יותר.",
+    subtitle: "מנויים שנשארים יותר. הכנסה צפויה יותר. יציבות.",
     description: "מנוי שנתי בהנחה (₪478 במקום ₪540). שכבת Premium: ברכות אישיות, גישה מוקדמת לסיפורים חדשים, סיפור מותאם אישית.",
-    whyNow: "יש 944 מנויים פעילים. אם 20% עוברים לשנתי = ₪90K מובטחים.",
+    whyNow: "יש 944 מנויים פעילים. אם 20% עוברים לשנתי = ₪90K מובטחים. יציבות בעזרת השם.",
     originalPrice: 2000, weeks: 1, icon: CreditCard, category: "future",
-    impact: "LTV גבוה + הכנסה צפויה", replaces: "רק מנוי חודשי",
+    impact: "שימור גבוה + הכנסה צפויה", replaces: "רק מנוי חודשי",
   },
   {
     id: "community-ads",
     name: "מוניטיזציה של הקהילה",
-    subtitle: "15,000 הורים שמקבלים סיפור שבועי — יש פה ערך פרסומי.",
+    subtitle: "15,000 הורים שמקבלים סיפור שבועי — יש פה ערך עסקי אדיר.",
     description: "מערכת שיתופי פעולה עם עסקים: תוכן ממומן, פרסומות מותאמות, ברטר. ערוץ הכנסה שלא תלוי במנויים.",
-    whyNow: "הקהילה החינמית = 15K אנשים בלי מוניטיזציה. כל הכנסה מפה = בונוס נקי.",
+    whyNow: "הקהילה החינמית = 15K הורים בלי מוניטיזציה. כל הכנסה מפה = בונוס נקי לעשייה.",
     originalPrice: 2500, weeks: 2, icon: Megaphone, category: "future",
     impact: "הכנסה מהקהילה החינמית", replaces: "קהילה בלי הכנסה",
   },
@@ -218,10 +218,10 @@ const ROADMAP = [
     items: [
       { name: "קמפיין כרטיס טיסה — להתניע את ה-Flywheel", status: "ready" as const },
       { name: "אוטומציית ביטול + dunning — לעצור את הדליפה", status: "ready" as const },
-      { name: "דשבורד יומי + קבוצת WhatsApp", status: "ready" as const },
-      { name: "Win-back — 417 לידים חמים", status: "ready" as const },
+      { name: "דשבורד יומי + קבוצת WhatsApp — לראות מה קורה", status: "ready" as const },
+      { name: "Win-back — 417 משפחות שמחכות לחזור", status: "ready" as const },
       { name: "Evergreen referral — בוט שלא נסגר", status: "ready" as const },
-      { name: "פלאו ברוכים הבאים חכם", status: "ready" as const },
+      { name: "פלאו ברוכים הבאים — חוויית כניסה שנוגעת בלב", status: "ready" as const },
     ],
   },
   {
@@ -230,9 +230,9 @@ const ROADMAP = [
     items: [
       { name: "אתר מלא + מערכת מנויים (מחליף Skolar)", status: "planned" as const },
       { name: "מערכת בוט חדשה (מחליפה Chatrace)", status: "planned" as const },
-      { name: "שידור יומי אוטומטי", status: "planned" as const },
-      { name: "קמפיין חופש גדול — מגה", status: "planned" as const },
-      { name: "ברכות יום הולדת אישיות", status: "planned" as const },
+      { name: "שידור יומי אוטומטי — 0 שליחות ידניות", status: "planned" as const },
+      { name: "קמפיין חופש גדול — מגה. גל!!!", status: "planned" as const },
+      { name: "ברכות יום הולדת אישיות לילדים", status: "planned" as const },
     ],
   },
   {
@@ -240,14 +240,14 @@ const ROADMAP = [
     emoji: "🍂",
     items: [
       { name: "לשונית הצגות + מכירה למוסדות", status: "future" as const },
-      { name: "סיפורים באנגלית + צרפתית", status: "future" as const },
+      { name: "סיפורים באנגלית + צרפתית — שווקים חדשים", status: "future" as const },
       { name: "AI בקול מנחם (11Labs)", status: "future" as const },
       { name: "חבילה שנתית + Premium", status: "future" as const },
-      { name: "קמפיין חנוכה 2.0", status: "future" as const },
+      { name: "קמפיין חנוכה 2.0 — פגזזזזז", status: "future" as const },
     ],
   },
   {
-    quarter: "2027 — הרחבה",
+    quarter: "2027 — בעזרת השם, הרחבה",
     emoji: "🌍",
     items: [
       { name: "NigunQuest — השקת אפליקציית בר מצווה", status: "future" as const },
@@ -271,20 +271,20 @@ const CAT_LABELS: Record<string, { label: string; color: string }> = {
 }
 
 const RETAINER_ITEMS = [
-  { icon: BarChart3, title: "דשבורד יומי אוטומטי", desc: "בכל בוקר, נתונים מעודכנים ישירות לוואטסאפ" },
-  { icon: Wrench, title: "תחזוקת אוטומציות", desc: "Make.com scenarios, webhooks, APIs — הכל רץ" },
-  { icon: Zap, title: "טיפול בתקלות טכניות", desc: "בעיה? מטפל תוך 24 שעות" },
-  { icon: Link, title: "עדכון לינקים בקבוצות", desc: "כשנפתחת קבוצה חדשה — הכל מתעדכן" },
-  { icon: FileBarChart, title: "דוח חודשי מפורט", desc: "הכנסות, churn, צמיחה, המלצות" },
-  { icon: Database, title: "גיבוי ועדכוני אבטחה", desc: "Supabase + אתר — הכל מעודכן ומגובה" },
-  { icon: MonitorSmartphone, title: "ניטור 24/7", desc: "התראות על כשלים בזמן אמת" },
+  { icon: BarChart3, title: "דשבורד יומי אוטומטי", desc: "כל בוקר, נתונים מעודכנים ישירות לוואטסאפ. בלי לשאול." },
+  { icon: Wrench, title: "תחזוקת אוטומציות", desc: "Make.com, webhooks, APIs — הכל רץ חלק. אני שומר." },
+  { icon: Zap, title: "טיפול בתקלות", desc: "משהו נשבר? מטפל תוך שעות, לא ימים." },
+  { icon: Link, title: "עדכון לינקים בקבוצות", desc: "קבוצה חדשה נפתחת — הכל מתעדכן לבד." },
+  { icon: FileBarChart, title: "דוח חודשי מפורט", desc: "הכנסות, נטישה, צמיחה, המלצות. הכל שקוף." },
+  { icon: Database, title: "גיבוי ועדכוני אבטחה", desc: "Supabase + אתר — הכל מעודכן ומגובה. שקט בראש." },
+  { icon: MonitorSmartphone, title: "ניטור 24/7", desc: "התראות על כשלים בזמן אמת. לא מחכים שמישהו ישים לב." },
 ]
 
 const STRATEGY_ITEMS = [
-  "פגישת אסטרטגיה חודשית (60 דקות)",
-  "תכנון הקמפיין הבא — מהתחלה ועד סוף",
-  "סקירת מדדים והמלצות מעשיות",
-  "תכנון roadmap רבעוני — 3 חודשים קדימה",
+  "פגישת אסטרטגיה חודשית (60 דקות) — פנים אל פנים על הכיוון",
+  "תכנון הקמפיין הבא — מהתחלה ועד סוף, ביחד",
+  "סקירת מדדים והמלצות מעשיות — מה עובד, מה לשנות",
+  "תכנון 3 חודשים קדימה — להגיע לעוד משפחות ועוד ילדים",
 ]
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -348,7 +348,7 @@ export function ProposalClient() {
   const monthlyRetainer = 2000 + (strategySession ? 500 : 0)
 
   const waMsg = encodeURIComponent(
-    `מנחם, הנה הפרויקטים שבחרתי לפי סדר עדיפויות:\n\n` +
+    `מנחם, הנה מה שבחרתי — לפי סדר עדיפויות:\n\n` +
     selectedProjects.map((p, i) =>
       `${i + 1}. ${p.name} — ${fmtCurrency(discountedPrice(p.originalPrice))} (${p.weeks} שב')`
     ).join("\n") +
@@ -356,7 +356,7 @@ export function ProposalClient() {
     `\nחסכת: ${fmtCurrency(totalSaved)}` +
     `\n+ תחזוקה ${fmtCurrency(monthlyRetainer)}/חודש` +
     (strategySession ? ` (כולל פגישת אסטרטגיה)` : "") +
-    `\n+ 15% ממנויים חדשים (לא ישנים)\n\nבוא נדבר!`
+    `\n+ 15% ממנויים חדשים (לא ישנים)\n\nיאללה, סגור!`
   )
 
   return (
@@ -367,20 +367,20 @@ export function ProposalClient() {
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/10 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <p className="text-lg text-muted-foreground mb-4">מנחם, שב נוח. מכין לך קפה? ☕</p>
+          <p className="text-lg text-muted-foreground mb-4">מנחם, שב. מכין לך קפה ☕</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-            התחלנו מ-₪2,110 בחודש.
+            זוכר את החודש הראשון? ₪2,110.
             <br />
             <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              היום? ₪45,216. צמיחה של x21.
+              היום? ₪45,216. בעזרת השם, גל שלא עוצר.
             </span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            אתה בנית 200+ סיפורים שילדים מתאהבים בהם.
+            אתה בנית 200+ סיפורים שנוגעים בלב של ילדים.
             <br className="hidden sm:block" />
-            אני בניתי את המערכות שהביאו 17,000 משפחות.
+            אני בניתי את הכלים שהביאו 17,000 משפחות.
             <br className="hidden sm:block" />
-            <strong className="text-foreground">ביחד הגענו ל-₪227K הכנסה.</strong> עכשיו — הצעד הבא.
+            <strong className="text-foreground">ביחד הגענו ל-₪227,669 הכנסה.</strong> יצאנו לדרך. עכשיו — הצעד הבא.
           </p>
 
           {/* Stats grid */}
@@ -389,7 +389,7 @@ export function ProposalClient() {
               { value: "₪227,669", label: "הכנסה כוללת" },
               { value: "x21", label: "צמיחה ב-8 חודשים" },
               { value: "944", label: "מנויים פעילים" },
-              { value: "17,000", label: "חברי קהילה" },
+              { value: "17,000", label: "משפחות בקהילה" },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-amber-500 to-orange-500 bg-clip-text text-transparent">
@@ -416,41 +416,41 @@ export function ProposalClient() {
           </div>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            10 מבצעי שיתופים מוצלחים | 88% מהכניסות לבוט = referral | הנתונים נשלפו ישירות מ-Cardcom, Green API והבוט
+            10 מבצעי שיתופים מוצלחים | 88% מהכניסות לבוט = הפניות מהורים | נתונים ישירות מ-Cardcom, Green API והבוט
           </p>
         </div>
       </section>
 
       {/* ═══════════════════ WHERE WE STAND ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">איפה אנחנו עומדים</h2>
-        <p className="text-center text-muted-foreground mb-10">מספרים אמיתיים — שלפתי ישירות מ-Cardcom, Green API והבוט</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">מה בנינו ביחד — ומה נופל בין הכיסאות</h2>
+        <p className="text-center text-muted-foreground mb-10">מספרים אמיתיים. שלפתי ישירות מ-Cardcom, Green API והבוט.</p>
 
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
             <h3 className="font-bold text-lg mb-4 text-emerald-600 flex items-center gap-2">
-              <CheckCircle className="h-5 w-5" /> מה עובד מצוין
+              <CheckCircle className="h-5 w-5" /> מה בנינו ביחד — שאפו ענק!!!
             </h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>10 מבצעי שיתופים מוצלחים — 17,000 חברים ב-18 קבוצות</span>
+                <span>10 מבצעי שיתופים מוצלחים — 17,000 משפחות ב-18 קבוצות</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>Conversion מ-5₪ ל-45₪: <strong>87-90%</strong> — מטורף</span>
+                <span>המרה מ-5₪ ל-45₪: <strong>87-90%</strong> — מטורף לגמרי</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>12,250 כניסות לבוט — 88% מהפניות אורגניות</span>
+                <span>12,250 כניסות לבוט — 88% מהפניות אורגניות של הורים</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>Flywheel מוכח שעובד כל פעם מחדש</span>
+                <span>Flywheel מוכח שעובד כל פעם מחדש. גל!!! גלללללל!</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>200+ סיפורים — התוכן מוכר את עצמו</span>
+                <span>200+ סיפורים — הסיפורים מוכרים את עצמם. הנשמה שלך עושה את העבודה.</span>
               </li>
             </ul>
           </div>
@@ -465,11 +465,11 @@ export function ProposalClient() {
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
-                <span><strong>309 שילמו 5₪ ולא המירו</strong> — כסף על הרצפה</span>
+                <span><strong>309 שילמו 5₪ ולא המירו</strong> — משפחות שרצו להצטרף ונפלו בדרך</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
-                <span>ביטול = עבודה ידנית ב-3 מערכות. אין dunning, אין exit survey</span>
+                <span>ביטול = עבודה ידנית ב-3 מערכות. אין dunning, אין סקר יציאה</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
@@ -489,17 +489,17 @@ export function ProposalClient() {
         <div className="rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-6 sm:p-8">
           <h3 className="text-xl font-extrabold text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
             <TrendingDown className="h-5 w-5" />
-            מנחם, הנה מה שקורה מתחת לרדאר
+            מנחם, תקשיב — יש משהו שקורה מתחת לרדאר
           </h3>
           <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-6">
-            המספרים האלה לא נראים בשום מקום — כי אין דשבורד. שלפתי אותם ידנית.
+            המספרים האלה לא נראים בשום מקום — כי אין דשבורד. אני חייב להראות לך.
           </p>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
             {[
               { value: "108", label: "עזבו בשקט", sub: "מנויים ששילמו ונעלמו" },
               { value: "309", label: "לא המירו", sub: "שילמו 5₪ ונתקעו" },
-              { value: "37%", label: "עוזבים בחודש 1", sub: "Onboarding שבור" },
+              { value: "37%", label: "עוזבים בחודש 1", sub: "חוויית כניסה שבורה" },
               { value: "78%", label: "בלי בקשת החזר", sub: "פשוט נעלמו" },
             ].map(s => (
               <div key={s.label} className="bg-white dark:bg-slate-800 rounded-xl p-4 text-center shadow-sm">
@@ -511,19 +511,19 @@ export function ProposalClient() {
           </div>
 
           <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4 text-sm text-muted-foreground space-y-2">
-            <p><strong className="text-foreground">סה&quot;כ לידים חמים:</strong> 417 אנשים ששילמו לנו כסף ונעלמו. לכל אחד יש שם, טלפון, ומייל ב-Cardcom.</p>
-            <p><strong className="text-foreground">מה חסר:</strong> אין dunning (הודעה כשאשראי נכשל), אין exit survey (למה עזבו), אין ניסיון להחזיר אף אחד.</p>
-            <p className="text-red-600 dark:text-red-400 font-medium">כל חודש שעובר בלי טיפול = עוד 40-70 מנויים שזולגים החוצה.</p>
+            <p><strong className="text-foreground">417 משפחות</strong> ששילמו לנו ונעלמו. לכל אחת יש שם, טלפון, ומייל ב-Cardcom.</p>
+            <p><strong className="text-foreground">מה חסר:</strong> אין dunning (הודעה כשאשראי נכשל), אין סקר יציאה (למה עזבו), אין ניסיון להחזיר אף משפחה.</p>
+            <p className="text-red-600 dark:text-red-400 font-medium">כל חודש שעובר בלי טיפול = עוד 40-70 מנויים שזולגים החוצה. עוד משפחות שמפסידות סיפורים.</p>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════ WITHOUT ME vs WITH ME ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">שני מסלולים</h2>
+        <h2 className="text-3xl font-extrabold text-center mb-3">שני מסלולים. אתה בוחר.</h2>
         <p className="text-center text-muted-foreground mb-4">מנחם, תסתכל על שני התרחישים. איפה אתה רואה את סיפורון בעוד 6 חודשים?</p>
         <p className="text-center text-xs text-muted-foreground mb-10 max-w-lg mx-auto">
-          זה לא איום — זה מציאות. ראינו שכשאין קמפיין פעיל, הבוט יורד ל-5 כניסות ביום.
+          זה לא איום. זה מציאות. ראינו שבלי קמפיין פעיל — 5 כניסות ביום.
           ראינו ש-108 מנויים עזבו בלי שאף אחד ידע.
         </p>
 
@@ -535,8 +535,8 @@ export function ProposalClient() {
                 <X className="h-5 w-5 text-red-500" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-red-700 dark:text-red-400">בלי יוסף</h3>
-                <p className="text-xs text-muted-foreground">מה קורה אם ממשיכים כמו היום</p>
+                <h3 className="font-bold text-lg text-red-700 dark:text-red-400">בלי פיצ׳ה</h3>
+                <p className="text-xs text-muted-foreground">ממשיכים כמו היום</p>
               </div>
             </div>
             <ul className="space-y-3 text-sm">
@@ -547,7 +547,7 @@ export function ProposalClient() {
                 "אין דשבורד — החלטות מתחושת בטן",
                 "אין dunning = כסף שדולף",
                 "קמפיינים ספונטניים — לפעמים 0 חודשים",
-                "417 לידים חמים שיושבים ומתקררים",
+                "417 משפחות שיושבות ומתקררות",
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <X className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
@@ -564,15 +564,15 @@ export function ProposalClient() {
                 <Check className="h-5 w-5 text-emerald-500" />
               </div>
               <div>
-                <h3 className="font-bold text-lg text-emerald-700 dark:text-emerald-400">עם יוסף</h3>
-                <p className="text-xs text-muted-foreground">מה קורה כשבונים את התשתית</p>
+                <h3 className="font-bold text-lg text-emerald-700 dark:text-emerald-400">עם פיצ׳ה</h3>
+                <p className="text-xs text-muted-foreground">בונים את הכלים — הנשמה כבר יש</p>
               </div>
             </div>
             <ul className="space-y-3 text-sm">
               {[
                 "Flywheel תמיד דולק — 200+ כניסות/יום בקמפיינים",
                 "Dunning תופס תשלומים כושלים אוטומטית",
-                "Exit survey אומר לך למה אנשים עוזבים",
+                "סקר יציאה אומר לך למה משפחות עוזבות",
                 "דשבורד כל בוקר ב-08:00 — נתונים חיים",
                 "Win-back מחזיר מנויים שעזבו",
                 "לוח שנה שנתי = 0 חודשים ריקים",
@@ -593,10 +593,10 @@ export function ProposalClient() {
         <div className="rounded-2xl bg-gradient-to-l from-amber-100 via-orange-100 to-amber-100 dark:from-amber-900/20 dark:via-orange-900/20 dark:to-amber-900/20 border-2 border-amber-300 dark:border-amber-700 p-6 sm:p-8 text-center">
           <div className="text-4xl mb-3">🎁</div>
           <h3 className="text-2xl font-extrabold text-amber-800 dark:text-amber-300 mb-2">
-            מתנה ממני אליך — 30% הנחה על כל הפרויקטים
+            מנחם, אני לא סתם קבלן. אני שותף לשליחות.
           </h3>
           <p className="text-sm text-amber-700 dark:text-amber-400 max-w-lg mx-auto leading-relaxed">
-            מנחם, אני מאמין בעסק הזה. אני רוצה שנתחיל לעבוד ביחד בלי שהמחיר יהיה חסם.
+            לכן — 30% הנחה על כל הפרויקטים. מתנה ממני אליך.
             <br />
             כל הפרויקטים למטה כוללים 30% הנחה — מחיר מקורי מסומן, מחיר אחרי הנחה בולט.
           </p>
@@ -613,9 +613,9 @@ export function ProposalClient() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold text-center mb-3">18 פרויקטים — אתה בוחר מה ומתי</h2>
         <p className="text-center text-muted-foreground mb-4 max-w-2xl mx-auto">
-          מנחם, אני לא מחליט בשבילך. כל פרויקט = הצעת מחיר נפרדת שאתה מאשר מראש.
+          אני לא מחליט בשבילך. תסמן מה חשוב לך, תזיז את הסדר, ויאללה.
           <br />
-          <strong className="text-foreground">סמן מה חשוב לך</strong>, גרור לסדר העדיפויות שלך, ולחץ על השם לפרטים מלאים.
+          <strong className="text-foreground">כל פרויקט = הצעת מחיר נפרדת שאתה מאשר מראש.</strong>
         </p>
         <p className="text-center text-xs text-muted-foreground mb-10">
           ☝️ לחץ על ✅ לבחירה &nbsp; | &nbsp; ↕️ גרור להזזת סדר &nbsp; | &nbsp; 📖 לחץ על שם הפרויקט לפרטים
@@ -761,11 +761,11 @@ export function ProposalClient() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold text-center mb-3">תחזוקה חודשית — {fmtCurrency(2000)}/חודש</h2>
         <p className="text-center text-muted-foreground mb-4 max-w-2xl mx-auto">
-          מנחם, אתה שואל את עצמך: &quot;למה אני משלם ₪2,000 כל חודש?&quot;
+          מנחם, אתה שואל למה ₪2,000 כל חודש?
         </p>
         <p className="text-center text-sm text-foreground mb-10 max-w-2xl mx-auto">
-          כי יש לך 7 מערכות שמדברות אחת עם השנייה (Cardcom, Green API, Make.com, Supabase, WhatsApp, Bot, אתר).
-          כשמשהו נשבר — ומשהו תמיד נשבר — מישהו צריך לתקן. תוך שעות, לא ימים.
+          כי יש 7 מערכות שמדברות אחת עם השנייה (Cardcom, Green API, Make.com, Supabase, WhatsApp, Bot, אתר).
+          כשמשהו נשבר — ומשהו תמיד נשבר — מישהו צריך לדעת לתקן. תוך שעות, לא ימים.
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -791,11 +791,11 @@ export function ProposalClient() {
         <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border p-5 mb-8">
           <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
-            למה אי אפשר לעשות את זה לבד?
+            מנחם, למה אי אפשר בלי מישהו טכני?
           </h4>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            דורש ידע ב-API (ל-Cardcom, Green API), מומחיות ב-Make.com, ניהול Supabase, ותחזוקת קוד.
-            זו לא משימה לאדם לא טכני. צריך מישהו שמכיר את כל הרכיבים ויודע לתקן כשמשהו נשבר — ומשהו תמיד נשבר.
+            צריך ידע ב-API (Cardcom, Green API), מומחיות ב-Make.com, ניהול Supabase, ותחזוקת קוד.
+            אתה מביא את הנשמה — אני מביא את הכלים. צריך מישהו שמכיר את כל החלקים ויודע לתקן כשמשהו נשבר. ומשהו תמיד נשבר.
           </p>
         </div>
 
@@ -843,8 +843,8 @@ export function ProposalClient() {
 
       {/* ═══════════════════ PAYMENT MODEL ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">איך זה עובד</h2>
-        <p className="text-center text-muted-foreground mb-10">שקוף לגמרי. אתה יודע על מה אתה משלם.</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">איך זה עובד — שקוף לגמרי</h2>
+        <p className="text-center text-muted-foreground mb-10">אם יש עבודה — יש תשלום. אין עבודה — אין תשלום. בדיוק כמו שביקשת.</p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
@@ -886,7 +886,7 @@ export function ProposalClient() {
             <div className="text-3xl font-extrabold text-primary mb-3">🏆</div>
             <p className="text-sm font-bold mb-2">בונוסי אבני דרך</p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              כשמגיעים ליעדי צמיחה ביחד — בונוס חד-פעמי.
+              כשמגיעים לאבני דרך ביחד — חוגגים ביחד. שאפו!
               <br /><br />
               {MILESTONES.map(m => (
                 <span key={m.target} className="block">
@@ -900,8 +900,8 @@ export function ProposalClient() {
 
       {/* ═══════════════════ MILESTONES ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">בונוסי צמיחה</h2>
-        <p className="text-center text-muted-foreground mb-10">כשמגיעים לאבני דרך ביחד — חוגגים ביחד</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">בונוסי צמיחה — שאפו! שאפו! שאפו ענק!!!</h2>
+        <p className="text-center text-muted-foreground mb-10">כשמגיעים לאבני דרך ביחד — חוגגים ביחד. עשייה מבורכת.</p>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {MILESTONES.map(m => (
@@ -917,8 +917,8 @@ export function ProposalClient() {
 
       {/* ═══════════════════ ROADMAP ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">מפת דרכים</h2>
-        <p className="text-center text-muted-foreground mb-10">מאפריל 2026 עד 2027 — כל שלב ברור</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">מפת דרכים — עשינו קברת דרך, עכשיו ממשיכים</h2>
+        <p className="text-center text-muted-foreground mb-10">מאפריל 2026 עד 2027 — כל שלב ברור. בעזרת השם.</p>
 
         <div className="space-y-8">
           {ROADMAP.map(q => (
@@ -946,7 +946,7 @@ export function ProposalClient() {
       {/* ═══════════════════ SUMMARY ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-slate-800/50 dark:to-slate-900/50 p-8">
-          <h2 className="text-2xl font-extrabold mb-6 text-center">סיכום ההסכם</h2>
+          <h2 className="text-2xl font-extrabold mb-6 text-center">סיכום — הכל על השולחן</h2>
           <div className="space-y-5 text-sm max-w-2xl mx-auto">
             <div className="flex gap-3">
               <span className="text-primary text-lg font-bold">1.</span>
@@ -972,13 +972,13 @@ export function ProposalClient() {
             <div className="flex gap-3">
               <span className="text-primary text-lg font-bold">4.</span>
               <div>
-                <strong>בונוסי אבני דרך</strong> — חד-פעמיים כשמגיעים ליעדים ביחד.
+                <strong>בונוסי אבני דרך</strong> — חד-פעמיים כשמגיעים ליעדים ביחד. שאפו!
               </div>
             </div>
             <div className="flex gap-3">
               <span className="text-primary text-lg font-bold">5.</span>
               <div>
-                <strong>תקופה</strong> — 6 חודשים + חידוש אוטומטי. כל צד יכול לסיים בהתראה של 30 יום.
+                <strong>תקופה</strong> — 6 חודשים + חידוש אוטומטי. כל צד יכול לסיים בהתראה של 30 יום. שקוף לגמרי.
               </div>
             </div>
           </div>
@@ -1012,10 +1012,10 @@ export function ProposalClient() {
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
         <p className="text-lg text-muted-foreground mb-2">מנחם,</p>
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-          בנית משהו מדהים.
+          אתה בנית את הנשמה.
           <br />
           <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-            בוא נבנה את התשתית שתיקח את זה הלאה.
+            יאללה נבנה את הכלים שייקחו את זה הלאה.
           </span>
         </h2>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
@@ -1025,7 +1025,7 @@ export function ProposalClient() {
           + תחזוקה {fmtCurrency(monthlyRetainer)}/חודש
           {strategySession && <span className="text-xs"> (כולל אסטרטגיה)</span>}
           <br />
-          <span className="text-sm">לחץ כדי לשלוח לי את הבחירה שלך בוואטסאפ.</span>
+          <span className="text-sm">שלח לי בוואטסאפ מה בחרת. סגור.</span>
         </p>
 
         <a
@@ -1033,17 +1033,16 @@ export function ProposalClient() {
           className="inline-flex items-center gap-3 bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
         >
           <Phone className="h-5 w-5" />
-          שלח בוואטסאפ ובוא נתחיל
+          יאללה מנחם — שלח בוואטסאפ
         </a>
 
         <p className="mt-6 text-xs text-muted-foreground max-w-sm mx-auto">
-          אם יש עבודה — יש תשלום. אם אין — ₪0.
+          יש עבודה — יש תשלום. אין עבודה — ₪0.
           <br />
-          שותפים לצמיחה, לא שכירים.
+          שותפים לשליחות, לא שכירים.
         </p>
       </section>
 
-      {/* ═══════════════════ FOOTER ═══════════════════ */}
       {/* ═══════════════════ PERSONAL NOTE ═══════════════════ */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
         <div className="rounded-2xl bg-amber-50/50 dark:bg-slate-800/50 border border-amber-200/50 dark:border-amber-800/20 p-6 sm:p-8">
@@ -1051,24 +1050,25 @@ export function ProposalClient() {
             מנחם,
             <br /><br />
             בשמונה חודשים ראיתי את סיפורון גדל ממשהו קטן לעסק של ₪45K בחודש.
-            ראיתי 17,000 משפחות שנכנסות, ראיתי ילדים שהולכים לישון עם חיוך.
+            ראיתי 17,000 משפחות שנכנסות. ראיתי ילדים שהולכים לישון עם חיוך. ברוך השם.
             <br /><br />
             אני יודע שאתה לא אוהב לשלם על דברים שאתה לא מבין למה הם עולים כסף.
             אני מכבד את זה. בגלל זה כל שקל פה מוסבר.
             <br /><br />
-            הלמה שלך הוא &quot;להצית בלב של ילד את הניצוץ הפנימי שלו — דרך סיפור.&quot;
+            הלמה שלך: &quot;להצית בלב של ילד את הניצוץ הפנימי שלו — דרך סיפור.&quot;
             <br />
-            הלמה שלי הוא לבנות את המערכת שתאפשר לזה לקרות — בסקייל, בלי שתצטרך לעבוד 18 שעות ביום.
+            הלמה שלי: לבנות את הכלים שיאפשרו לזה לקרות — בסקייל, בלי שתצטרך לעבוד 18 שעות ביום.
             <br /><br />
-            שותפים לצמיחה. מהיום הראשון.
+            שותפים לשליחות. מהיום הראשון.
             <br /><br />
-            <strong className="text-foreground">— יוסף</strong>
+            <strong className="text-foreground">— פיצ׳ה</strong>
           </p>
         </div>
       </section>
 
+      {/* ═══════════════════ FOOTER ═══════════════════ */}
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">
-        הצעה זו חסויה ומיועדת למנחם שרון בלבד. סיפורון © 2026
+        נבנה עם אהבה. סיפורון © 2026
       </footer>
     </div>
   )
