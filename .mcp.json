@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "make-sipuron": {
+      "type": "http",
+      "url": "https://eu2.make.com/mcp/server/79b42c99-0fbb-4600-9481-2df44167da6c",
+      "headers": {
+        "Authorization": "Bearer MAOYPrnr71TxhbfurmMzf5qh1hzqD23xZXsnKc8s6R"
+      }
+    }
+  }
+}
