@@ -91,12 +91,12 @@ export default function SubscribersPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground">ניהול מנויים</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">ניהול מנויים</h1>
           <p className="text-muted-foreground text-sm">חיפוש, סינון וניהול כל המנויים</p>
         </div>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" className="w-full sm:w-auto">
           <Filter className="h-4 w-4 ml-2" />
           ייצוא
         </Button>
@@ -145,12 +145,13 @@ export default function SubscribersPage() {
             className="pr-9"
           />
         </div>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {FILTER_OPTIONS.map((opt) => (
             <Button
               key={opt.value}
               variant={filter === opt.value ? "default" : "outline"}
               size="sm"
+              className="shrink-0"
               onClick={() => setFilter(opt.value)}
             >
               {opt.label}
@@ -161,6 +162,7 @@ export default function SubscribersPage() {
 
       {/* Table */}
       <Card className="overflow-hidden">
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -228,6 +230,7 @@ export default function SubscribersPage() {
             })}
           </TableBody>
         </Table>
+        </div>
       </Card>
     </div>
   )

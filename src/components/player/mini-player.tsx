@@ -28,7 +28,7 @@ export function MiniPlayer() {
 
   return (
     <div
-      className="fixed bottom-0 inset-x-0 z-50 glass border-t border-border/50 animate-in slide-in-from-bottom duration-300"
+      className="fixed bottom-0 inset-x-0 z-50 glass border-t border-border/50 animate-in slide-in-from-bottom duration-300 pb-[env(safe-area-inset-bottom)]"
     >
       {/* Thin progress line at top of mini player */}
       <div className="h-0.5 w-full bg-muted">
@@ -38,7 +38,7 @@ export function MiniPlayer() {
         />
       </div>
 
-      <div className="flex items-center gap-3 px-4 py-2 max-w-screen-xl mx-auto">
+      <div className="flex items-center gap-3 px-4 py-3 max-w-screen-xl mx-auto">
         {/* Cover art */}
         <button
           onClick={() => console.log("[MiniPlayer] Navigate to full player")}
@@ -68,6 +68,7 @@ export function MiniPlayer() {
         <Button
           variant="ghost"
           size="icon"
+          className="h-11 w-11"
           onClick={isPlaying ? pause : resume}
           aria-label={isPlaying ? "השהה" : "נגן"}
         >
@@ -78,6 +79,7 @@ export function MiniPlayer() {
         <Button
           variant="ghost"
           size="icon"
+          className="h-11 w-11"
           onClick={close}
           aria-label="סגור נגן"
         >

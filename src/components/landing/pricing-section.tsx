@@ -27,7 +27,7 @@ export function PricingSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {/* Monthly */}
           <Card className="relative p-8 border-2 border-border hover:border-primary/40 transition-colors">
             <h3 className="text-xl font-bold text-foreground mb-1">חודשי</h3>

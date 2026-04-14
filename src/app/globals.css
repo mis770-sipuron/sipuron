@@ -82,7 +82,19 @@
   --chart-3: #7C3AED;
   --chart-4: #FB7185;
   --chart-5: #3B82F6;
-  --radius: 0.75rem;
+  --radius: 1.5rem;
+
+  /* Premium shadows (from Lovable) */
+  --shadow-card: 0 4px 20px -4px rgba(149, 173, 194, 0.15);
+  --shadow-button: 0 4px 12px -2px rgba(246, 176, 56, 0.35);
+  --shadow-hover: 0 12px 32px -8px rgba(149, 173, 194, 0.25);
+
+  /* Boutique colors (from Lovable) */
+  --color-terracotta: #E96952;
+  --color-mustard: #F6B038;
+  --color-antique-pink: #F1B7AD;
+  --color-mint: #9BBEBC;
+  --color-grayish-blue: #95ADC2;
   --sidebar: #FFFBF0;
   --sidebar-foreground: #1C1917;
   --sidebar-primary: #D97706;
@@ -215,4 +227,136 @@
 .dark .skeleton {
   background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
   background-size: 200% 100%;
+}
+
+/* ══════ PREMIUM EFFECTS (from Lovable) ══════ */
+
+/* Gold gradient button */
+.gradient-gold {
+  background: linear-gradient(135deg, #F6B038 0%, #E5A030 100%);
+}
+
+/* Shimmer effect on buttons */
+@keyframes shimmerSlide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-effect {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer-effect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+  animation: shimmerSlide 2s infinite;
+}
+
+/* Premium glow effects */
+.glow-gold {
+  box-shadow: 0 0 30px rgba(246, 176, 56, 0.4), 0 4px 16px rgba(246, 176, 56, 0.3);
+}
+.glow-primary {
+  box-shadow: 0 0 30px rgba(217, 119, 6, 0.3);
+}
+
+/* Button pulse for CTA */
+@keyframes btnBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.animate-btn-bounce {
+  animation: btnBounce 1.8s ease-in-out infinite;
+}
+
+/* Float animation for decorative elements */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Twinkle effect */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.animate-twinkle {
+  animation: twinkle 3s ease-in-out infinite;
+}
+
+/* Flame pulse for streaks */
+@keyframes flamePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+.animate-flame-pulse {
+  animation: flamePulse 1.5s ease-in-out infinite;
+}
+
+/* Node glow for active quest items */
+@keyframes nodeGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(14, 165, 233, 0); }
+}
+.animate-node-glow {
+  animation: nodeGlow 2s ease-in-out infinite;
+}
+
+/* Premium card hover (Lovable style) */
+.premium-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: var(--shadow-card);
+}
+.premium-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Glass card (Lovable enhanced) */
+.glass-card {
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(210, 210, 210, 0.5);
+}
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text gradient effects */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #F6B038 0%, #D4950A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scroll gallery animation */
+@keyframes scrollRight {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-scroll-gallery {
+  animation: scrollRight 40s linear infinite;
+}
+
+/* Safe area for mobile (notched phones) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Mobile touch optimization */
+@media (hover: none) {
+  .premium-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-card);
+  }
+  .story-card-hover:hover {
+    transform: none;
+  }
 }

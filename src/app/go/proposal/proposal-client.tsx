@@ -1,173 +1,208 @@
 "use client"
 
-import { useState } from "react"
-import { CheckCircle, Clock, Zap, TrendingUp, Shield, Rocket, ArrowLeft, ArrowUp, ArrowDown, Star, Globe, MessageSquare, BarChart3, Bot, Repeat, Megaphone, Gift, Film, Languages, Mic, CreditCard, Users, CalendarCheck, Send } from "lucide-react"
+import { useState, useRef, useCallback } from "react"
+import {
+  CheckCircle, Clock, Zap, TrendingUp, Rocket, ArrowLeft, ArrowDown,
+  Star, Globe, BarChart3, Bot, Repeat, Megaphone, Gift, Film,
+  Languages, Mic, CreditCard, Users, CalendarCheck, Send,
+  GripVertical, ChevronDown, ChevronUp, Heart, Phone, Shield,
+  AlertTriangle, TrendingDown, Sparkles, Gamepad2, X, Check,
+  Wrench, MessageCircle, RefreshCw, Link, FileBarChart, Database,
+  MonitorSmartphone, BookOpen,
+} from "lucide-react"
 import { fmtCurrency } from "@/lib/constants"
 
-/* ── data ──────────────────────────────────────────── */
+/* ── types & data ──────────────────────────────────── */
 
-const STATS = [
-  { value: "₪227,669", label: "הכנסה נטו מיום 1" },
-  { value: "x21", label: "צמיחה ב-8 חודשים" },
-  { value: "944", label: "מנויים פעילים" },
-  { value: "17,000", label: "חברי קהילה" },
-]
+const DISCOUNT = 0.30
 
 type Project = {
   id: string
   name: string
+  subtitle: string
   description: string
-  price: number
+  whyNow: string
+  originalPrice: number
   weeks: number
   icon: typeof Rocket
   impact: string
   replaces: string
-  category: "core" | "growth" | "content" | "future"
-  priority: "critical" | "high" | "medium" | "nice"
+  category: "core" | "growth" | "content" | "future" | "special"
 }
 
 const ALL_PROJECTS: Project[] = [
-  // CORE
+  // ── Core Infrastructure ──
   {
     id: "site",
     name: "אתר + מערכת מנויים",
-    description: "מחליף Skolar. ארכיון סיפורים, player, אזור אישי, ביטול עצמי, הרשמה, referral מובנה. Supabase = single source of truth.",
-    price: 12000, weeks: 6, icon: Globe, category: "core", priority: "critical",
+    subtitle: "פלטפורמה אחת שמחליפה 5 כלים שונים.",
+    description: "אתר סיפורון מלא: ארכיון 200+ סיפורים עם player, אזור אישי למנויים (סטטוס, תשלומים, ביטול עצמי), דף הרשמה עם referral מובנה. Supabase = single source of truth. סנכרון דו-כיווני עם Cardcom + Green API.",
+    whyNow: "Skolar + Google Sheets + Fillout = 3 מערכות שלא מדברות אחת עם השנייה. כל שינוי = עבודה ידנית ב-3 מקומות.",
+    originalPrice: 12000, weeks: 6, icon: Globe, category: "core",
     impact: "תשתית לכל השאר", replaces: "Skolar + Fillout + Google Sheets",
   },
   {
     id: "automation",
     name: "אוטומציית ביטול + Dunning",
-    description: "ביטול אוטומטי: Cardcom + Skolar + WhatsApp קבוצה + תפוצה. Dunning: הודעה ללקוח + תזכורות. Exit survey + הפצה למחלקות.",
-    price: 4000, weeks: 2, icon: Zap, category: "core", priority: "critical",
+    subtitle: "108 מנויים עזבו בשקט. בלי שידענו. בלי שנלחמנו.",
+    description: "מערכת אוטומטית שמטפלת בכל ביטול: קריאת Gmail של מנחם → ביטול ב-Cardcom + WhatsApp קבוצה + תפוצה → הודעת פרידה עם סקר סיבה → שמירה ב-Supabase → הפצה למחלקות. כולל dunning: כשכרטיס אשראי לא עובר → הודעה ללקוח → תזכורת אחרי 3 ימים → סימון אחרי 7.",
+    whyNow: "כל חודש 40-70 אנשים מפסיקים לשלם בשקט. אין exit survey, אין dunning, אין ניסיון להחזיר. כסף שזורם החוצה.",
+    originalPrice: 4000, weeks: 2, icon: Zap, category: "core",
     impact: "חיסכון ~60 ביטולים שקטים/חודש", replaces: "עבודה ידנית × 3 מערכות",
   },
   {
     id: "dashboard",
     name: "דשבורד + קבוצת WhatsApp יומית",
-    description: "דשבורד אוטומטי מיום 1. נתונים מ-Cardcom + Green API + Bot. התראות real-time. עדכון יומי 08:00 בקבוצה ייעודית.",
-    price: 3500, weeks: 2, icon: BarChart3, category: "core", priority: "critical",
+    subtitle: "היום אתה מנהל עסק של ₪45K בלי לדעת מה קורה בו.",
+    description: "דשבורד אוטומטי עם כל הנתונים מיום 1: הכנסות מ-Cardcom, כניסות מהבוט, גדלי קבוצות מ-Green API. התראות real-time על כשלי אשראי, churn, ו-Flywheel שנעצר. כל בוקר ב-08:00 — סיכום יומי נשלח לקבוצת WhatsApp ייעודית דרך Green API.",
+    whyNow: "בשביל לקבל את הנתונים שהצגתי לך היום — הייתי צריך לשלוף ידנית מ-3 APIs שונים. עם דשבורד, זה יגיע לבד כל בוקר.",
+    originalPrice: 3500, weeks: 2, icon: BarChart3, category: "core",
     impact: "0 החלטות מתחושת בטן", replaces: "בדיקה ידנית בכל מערכת",
   },
 
-  // GROWTH
+  // ── Growth ──
+  {
+    id: "campaign-flight",
+    name: "קמפיין כרטיס טיסה לאירופה",
+    subtitle: "ה-Flywheel עומד כבר 6 שבועות. צריך להתניע עכשיו.",
+    description: "תכנון מלא של קמפיין שיתופים: פתיחת קבוצה 19, הגדרת בוט עם לינק אישי, גיוס שותפים עסקיים לפרסים, ניהול הקמפיין, ודוח תוצאות מפורט.",
+    whyNow: "באפריל נכנסו רק 5 אנשים לבוט. בקמפיין תשעה באב נכנסו 2,752. ההבדל = קמפיין.",
+    originalPrice: 2000, weeks: 1, icon: Megaphone, category: "growth",
+    impact: "500-2,000 חברים חדשים", replaces: "Flywheel עומד",
+  },
   {
     id: "bot",
     name: "מערכת בוט חדשה (מחליפה Chatrace)",
-    description: "חיבור FB, מדידה מלאה, לינק אישי, הודעות בתשלום, עדכון לינקים אוטומטי כשנפתחת קבוצה חדשה.",
-    price: 5000, weeks: 3, icon: Bot, category: "growth", priority: "high",
-    impact: "Flywheel אוטומטי — לינקים מתעדכנים לבד", replaces: "Chatrace + עדכון ידני",
+    subtitle: "בוט שמודד, מחובר לפייסבוק, ומעדכן לינקים לבד.",
+    description: "מערכת בוט מלאה: חיבור לפייסבוק, לינק אישי לכל חבר, מדידה מלאה (מי הפנה, כמה נרשמו, ROI), הודעות בתשלום כשצריך. כשנפתחת קבוצה חדשה — כל הלינקים בכל ההודעות מתעדכנים אוטומטית.",
+    whyNow: "Chatrace לא נותנת מדידה מספיקה ואין עדכון לינקים אוטומטי. כל קבוצה חדשה = עדכון ידני בעשרות מקומות.",
+    originalPrice: 5000, weeks: 3, icon: Bot, category: "growth",
+    impact: "Flywheel אוטומטי", replaces: "Chatrace + עדכון ידני",
   },
   {
     id: "evergreen",
-    name: "Evergreen Referral (בוט 24/7)",
-    description: "בוט referral תמיד פתוח. פרס חודשי מתחלף. עדכון לינקים אוטומטי. שהבוט לא ייסגר בין קמפיינים.",
-    price: 2500, weeks: 1, icon: Repeat, category: "growth", priority: "high",
+    name: "Evergreen Referral — בוט שלא נסגר",
+    subtitle: "היום הבוט סגור בין קמפיינים. 5 כניסות ביום. זה פשע.",
+    description: "בוט referral שפתוח 24/7, כל חודש עם פרס אחר. כל חבר בקהילה יכול תמיד לשתף ולהרוויח. כשנפתחת קבוצה חדשה — הלינקים מתעדכנים אוטומטית בכל מקום.",
+    whyNow: "בין קמפיינים — 5 כניסות ביום. עם Evergreen — 150-300. ההבדל = ₪0 השקעה, רק שהבוט פתוח.",
+    originalPrice: 2500, weeks: 1, icon: Repeat, category: "growth",
     impact: "150-300 כניסות/חודש במקום 5", replaces: "בוט שנסגר בין קמפיינים",
   },
   {
     id: "campaign-system",
-    name: "מערכת קמפיינים (לוח שנה + תבניות)",
-    description: "לוח שנה שנתי 12 חודשים. תבנית מוכנה לכל סוג קמפיין. טריגרים אוטומטיים. אפס חודשים ריקים.",
-    price: 3000, weeks: 2, icon: CalendarCheck, category: "growth", priority: "high",
-    impact: "אפס חודשים בלי קמפיין", replaces: "תכנון ידני + שכחה",
-  },
-  {
-    id: "campaign-flight",
-    name: "קמפיין כרטיס טיסה לאירופה",
-    description: "תכנון + הקמת קבוצה 19 + הגדרת בוט + גיוס שותפים עסקיים + ניהול + דוח תוצאות.",
-    price: 2000, weeks: 1, icon: Megaphone, category: "growth", priority: "critical",
-    impact: "500-2,000 חברים חדשים", replaces: "Flywheel עומד 6 שבועות!",
+    name: "מערכת קמפיינים + לוח שנה",
+    subtitle: "12 חודשים מתוכננים מראש. אפס חודשים ריקים.",
+    description: "לוח שנה שנתי שמתואם לחגים יהודיים (חופש גדול, תשרי, חנוכה, פורים). תבנית מוכנה לכל סוג קמפיין (A-E). טריגרים אוטומטיים: קבוצה בשלה? התראה. אין קמפיין מתוכנן? התראה.",
+    whyNow: "הקמפיינים עד היום היו ספונטניים. לפעמים 7 קבוצות בחודש, לפעמים 0. צריך מערכת שלא שוכחת.",
+    originalPrice: 3000, weeks: 2, icon: CalendarCheck, category: "growth",
+    impact: "אפס חודשים בלי קמפיין", replaces: "תכנון ידני",
   },
   {
     id: "winback",
     name: "Win-back Campaign",
-    description: "108 עוזבים + 309 לא-המירו = 417 לידים חמים. הודעת WhatsApp + מייל ממוקדת לפי סיבת עזיבה.",
-    price: 1500, weeks: 1, icon: Users, category: "growth", priority: "high",
-    impact: "הכנסה מיידית מלידים קיימים", replaces: "417 לידים שיושבים בלי מענה",
+    subtitle: "417 אנשים ששילמו לנו כסף ונעלמו. יש לנו את הטלפון שלהם.",
+    description: "108 מנויים שעזבו אחרי ששילמו 45₪ + 309 שלא המירו מ-5₪. לכל אחד יש שם, טלפון, ומייל מ-Cardcom. נשלח הודעת WhatsApp אישית ממוקדת: מי שעזב בגלל מחיר → הצעה מיוחדת. מי שלא המיר → תזכורת עם סיפור טעימה.",
+    whyNow: "הלידים קרים ככל שעובר זמן. כל יום שעובר = פחות סיכוי להחזיר אותם.",
+    originalPrice: 1500, weeks: 1, icon: Users, category: "growth",
+    impact: "הכנסה מיידית מלידים קיימים", replaces: "417 לידים שיושבים",
   },
 
-  // CONTENT & EXPERIENCE
+  // ── Content & Experience ──
   {
     id: "onboarding",
     name: "פלאו ברוכים הבאים חכם",
-    description: "במקום בלוק הודעה ארוכה: סדרת הודעות מפוזרות. מיידי → שעה → יום 2 → יום 7. תגובות חוזרות לתפעול.",
-    price: 2000, weeks: 1, icon: Send, category: "content", priority: "high",
-    impact: "חוויית כניסה טובה = retention גבוה", replaces: "בלוק טקסט מסורבל",
+    subtitle: "במקום בלוק טקסט ענק — סדרת הודעות שבונה חיבור.",
+    description: "מנוי חדש מקבל סדרת הודעות מפוזרות: מיידי → הסיפור הראשון (אחרי שעה) → טיפ ליום 2 → שאלה ביום 7. תגובות חוזרות למערכת לאיסוף data. חוויית כניסה שמרגישה אישית.",
+    whyNow: "37% מהעוזבים עוזבים אחרי חודש 1. חוויית כניסה טובה = הסיכוי הכי גדול לשמור אותם.",
+    originalPrice: 2000, weeks: 1, icon: Send, category: "content",
+    impact: "retention גבוה יותר בחודש 1", replaces: "בלוק טקסט מסורבל",
   },
   {
     id: "birthday",
     name: "ברכות יום הולדת אישיות",
-    description: "Data כבר קיים (תאריכי לידה עבריים מ-Fillout). הקלטה אישית ממנחם + הפתעה. Premium feature.",
-    price: 2500, weeks: 1, icon: Gift, category: "content", priority: "medium",
-    impact: "WOW effect + upsell אפשרי", replaces: "אין — פיצ'ר חדש",
+    subtitle: "ה-data כבר קיים. תאריכי לידה עבריים מ-Fillout.",
+    description: "כל ילד של מנוי מקבל ברכת יום הולדת אישית: הקלטה מיוחדת ממנחם + הפתעה. WOW effect שגורם להורים לשתף. אפשרות ל-premium feature בתשלום.",
+    whyNow: "ה-data קיים — רק צריך לבנות את האוטומציה. ROI גבוה על השקעה קטנה.",
+    originalPrice: 2500, weeks: 1, icon: Gift, category: "content",
+    impact: "WOW + שיתופים אורגניים", replaces: "אין — פיצ'ר חדש",
   },
   {
     id: "renewal-gift",
-    name: "פינוק לפני חידוש",
-    description: "Cardcom: מי מתחדש בעוד יומיים? לא שישי/שבת → שליחת סיפור בונוס / הפתעה. מפחית churn.",
-    price: 1500, weeks: 1, icon: Gift, category: "content", priority: "medium",
+    name: "פינוק לפני חידוש מנוי",
+    subtitle: "יומיים לפני שיורד החיוב — הפתעה קטנה.",
+    description: "Cardcom API: מי מתחדש בעוד יומיים? אם לא שישי/שבת → שליחת סיפור בונוס או הפתעה. הלקוח מרגיש שחושבים עליו בדיוק ברגע שהוא שוקל לבטל.",
+    whyNow: "הרבה ביטולים קורים סביב תאריך החידוש. פינוק קטן = ההבדל בין להישאר לעזוב.",
+    originalPrice: 1500, weeks: 1, icon: Heart, category: "content",
     impact: "ירידה ב-churn סביב חידוש", replaces: "חידוש בלי שום תקשורת",
   },
   {
     id: "daily-scheduler",
     name: "שידור יומי אוטומטי",
-    description: "סיפור יומי למועדון ב-17:00. סיפור שבועי ל-18 קבוצות חינמיות. הכל מתוזמן מ-Supabase.",
-    price: 2000, weeks: 1, icon: Clock, category: "content", priority: "high",
+    subtitle: "סיפור כל יום ב-17:00, בלי שמישהו ילחץ 'שלח'.",
+    description: "מערכת שידור: סיפור יומי למועדון ב-17:00 + סיפור שבועי ל-18 קבוצות חינמיות. הכל מתוזמן מ-Supabase. מנחם מעלה סיפור → המערכת שולחת בזמן הנכון.",
+    whyNow: "שידור ידני לכל הקבוצות = זמן. שכחה = יום בלי סיפור = אכזבה.",
+    originalPrice: 2000, weeks: 1, icon: Clock, category: "content",
     impact: "0 שידורים ידניים", replaces: "שליחה ידנית כל יום",
   },
 
-  // FUTURE
+  // ── Future / Expansion ──
   {
     id: "shows",
     name: "לשונית הצגות באתר",
-    description: "קטלוג הצגות + צפייה + הזמנה. מכירה למוסדות (~267₪). חיבור ל-Cardcom.",
-    price: 3500, weeks: 2, icon: Film, category: "future", priority: "medium",
+    subtitle: "ערוץ הכנסה חדש — צפייה + מכירה למוסדות.",
+    description: "קטלוג הצגות באתר: צפייה אונליין, הזמנה להצגה חיה. מכירה לגנים ומוסדות (~267₪ להצגה). חיבור ל-Cardcom לתשלום.",
+    whyNow: "מנחם כבר מופיע בהצגות. המכירה ידנית. אתר = סקייל.",
+    originalPrice: 3500, weeks: 2, icon: Film, category: "future",
     impact: "ערוץ הכנסה חדש", replaces: "מכירה ידנית",
   },
   {
     id: "languages",
     name: "סיפורים באנגלית + צרפתית",
-    description: "2 קבוצות היכרות חדשות. תרגום/הקלטה. דף נחיתה בשפות. Flywheel בשווקים חדשים.",
-    price: 4000, weeks: 3, icon: Languages, category: "future", priority: "medium",
-    impact: "שוק חדש לגמרי", replaces: "עברית בלבד",
+    subtitle: "2 שווקים חדשים לגמרי. אותו מודל, שפה אחרת.",
+    description: "פתיחת 2 קבוצות היכרות בשפות חדשות. תרגום/הקלטה של סיפורים נבחרים. דף נחיתה בשפה. אותו Flywheel — שוק חדש.",
+    whyNow: "מנחם הציע את זה ב-13.4. יש ביקוש מהקהילות בחו\"ל.",
+    originalPrice: 4000, weeks: 3, icon: Languages, category: "future",
+    impact: "שוק חדש", replaces: "עברית בלבד",
   },
   {
     id: "ai-voice",
-    name: "סרטוני AI בקול מנחם (11Labs)",
-    description: "Voice clone של מנחם. סרטוני הלכות שבת, בין אדם לחברו. תוכן בסקייל.",
-    price: 3000, weeks: 2, icon: Mic, category: "future", priority: "nice",
+    name: "AI בקול מנחם (11Labs)",
+    subtitle: "תוכן בסקייל — בלי שמנחם ישב מול מיקרופון.",
+    description: "Voice clone של מנחם ב-11Labs. סרטוני הלכות שבת, בין אדם לחברו, תוכן חינוכי. מנחם מאשר, AI מייצר.",
+    whyNow: "צוואר בקבוק = זמן הקלטה של מנחם. AI פותר את זה.",
+    originalPrice: 3000, weeks: 2, icon: Mic, category: "future",
     impact: "תוכן אינסופי בקול מנחם", replaces: "רק הקלטות ידניות",
   },
   {
     id: "annual-plan",
     name: "חבילה שנתית + Premium",
-    description: "מנוי שנתי בהנחה. שכבת Premium: ברכות אישיות, גישה מוקדמת, סיפור מותאם.",
-    price: 2000, weeks: 1, icon: CreditCard, category: "future", priority: "medium",
+    subtitle: "LTV גבוה יותר. הכנסה צפויה יותר.",
+    description: "מנוי שנתי בהנחה (₪478 במקום ₪540). שכבת Premium: ברכות אישיות, גישה מוקדמת לסיפורים חדשים, סיפור מותאם אישית.",
+    whyNow: "יש 944 מנויים פעילים. אם 20% עוברים לשנתי = ₪90K מובטחים.",
+    originalPrice: 2000, weeks: 1, icon: CreditCard, category: "future",
     impact: "LTV גבוה + הכנסה צפויה", replaces: "רק מנוי חודשי",
   },
   {
     id: "community-ads",
-    name: "פרסומות בקהילה החינמית",
-    description: "מערכת פרסום לקהילת 15K. שותפים עסקיים. תוכן ממומן. ערוץ הכנסה נוסף.",
-    price: 2500, weeks: 2, icon: Megaphone, category: "future", priority: "nice",
-    impact: "מוניטיזציה של הקהילה החינמית", replaces: "קהילה חינמית בלי הכנסה",
+    name: "מוניטיזציה של הקהילה",
+    subtitle: "15,000 הורים שמקבלים סיפור שבועי — יש פה ערך פרסומי.",
+    description: "מערכת שיתופי פעולה עם עסקים: תוכן ממומן, פרסומות מותאמות, ברטר. ערוץ הכנסה שלא תלוי במנויים.",
+    whyNow: "הקהילה החינמית = 15K אנשים בלי מוניטיזציה. כל הכנסה מפה = בונוס נקי.",
+    originalPrice: 2500, weeks: 2, icon: Megaphone, category: "future",
+    impact: "הכנסה מהקהילה החינמית", replaces: "קהילה בלי הכנסה",
+  },
+
+  // ── Special Projects ──
+  {
+    id: "nigunquest",
+    name: "NigunQuest — אפליקציית בר מצווה",
+    subtitle: "אפליקציה gamified ללימוד קריאת התורה. כבר יש spec מלא + Lovable prototype.",
+    description: "אפליקציית PWA בסגנון Duolingo ללימוד טעמי המקרא ופרשת בר מצווה. מפת מסע (quest map), שיעורי אודיו, הקלטה ותרגול קולי, פאנל ניהול למורים. React + Supabase + PWA. כבר קיים spec טכני מלא ואב-טיפוס ב-Lovable.",
+    whyNow: "הפרויקט כבר מתוכנן ברמת spec. יש prototype. צריך רק לבנות production version. מתאים ל-2027 — אבל התכנון מתחיל עכשיו.",
+    originalPrice: 15000, weeks: 8, icon: Gamepad2, category: "special",
+    impact: "מוצר חדש — שוק בר מצוות", replaces: "אין — מוצר חדש לגמרי",
   },
 ]
-
-const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
-  core: { label: "תשתית ליבה", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-  growth: { label: "צמיחה", color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" },
-  content: { label: "תוכן וחוויה", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-  future: { label: "עתידי", color: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400" },
-}
-
-const PRIORITY_LABELS: Record<string, { label: string; color: string }> = {
-  critical: { label: "קריטי", color: "text-red-600" },
-  high: { label: "גבוה", color: "text-amber-600" },
-  medium: { label: "בינוני", color: "text-blue-600" },
-  nice: { label: "נחמד", color: "text-slate-500" },
-}
 
 const MILESTONES = [
   { target: "1,200 מנויים", bonus: 3000, icon: "🎯" },
@@ -178,209 +213,464 @@ const MILESTONES = [
 
 const ROADMAP = [
   {
-    quarter: "Q2 2026 (אפריל-יוני)",
+    quarter: "מיידי — אפריל-מאי 2026",
+    emoji: "🔥",
     items: [
-      { name: "קמפיין כרטיס טיסה", status: "ready" },
-      { name: "אוטומציית ביטול + dunning", status: "ready" },
-      { name: "דשבורד + קבוצת WhatsApp", status: "ready" },
-      { name: "Win-back campaign (417 לידים)", status: "ready" },
-      { name: "Evergreen referral", status: "ready" },
-      { name: "פלאו ברוכים הבאים חכם", status: "ready" },
+      { name: "קמפיין כרטיס טיסה — להתניע את ה-Flywheel", status: "ready" as const },
+      { name: "אוטומציית ביטול + dunning — לעצור את הדליפה", status: "ready" as const },
+      { name: "דשבורד יומי + קבוצת WhatsApp", status: "ready" as const },
+      { name: "Win-back — 417 לידים חמים", status: "ready" as const },
+      { name: "Evergreen referral — בוט שלא נסגר", status: "ready" as const },
+      { name: "פלאו ברוכים הבאים חכם", status: "ready" as const },
     ],
   },
   {
-    quarter: "Q3 2026 (יולי-ספטמבר)",
+    quarter: "קיץ — יוני-ספטמבר 2026",
+    emoji: "☀️",
     items: [
-      { name: "אתר מלא + מערכת מנויים", status: "planned" },
-      { name: "מערכת בוט חדשה", status: "planned" },
-      { name: "שידור יומי אוטומטי", status: "planned" },
-      { name: "קמפיין חופש גדול", status: "planned" },
-      { name: "ברכות יום הולדת", status: "planned" },
+      { name: "אתר מלא + מערכת מנויים (מחליף Skolar)", status: "planned" as const },
+      { name: "מערכת בוט חדשה (מחליפה Chatrace)", status: "planned" as const },
+      { name: "שידור יומי אוטומטי", status: "planned" as const },
+      { name: "קמפיין חופש גדול — מגה", status: "planned" as const },
+      { name: "ברכות יום הולדת אישיות", status: "planned" as const },
     ],
   },
   {
-    quarter: "Q4 2026 (אוקטובר-דצמבר)",
+    quarter: "סתיו-חורף — אוקטובר-דצמבר 2026",
+    emoji: "🍂",
     items: [
-      { name: "לשונית הצגות + מוסדות", status: "future" },
-      { name: "סיפורים באנגלית + צרפתית", status: "future" },
-      { name: "AI בקול מנחם (11Labs)", status: "future" },
-      { name: "חבילה שנתית + Premium", status: "future" },
-      { name: "קמפיין חנוכה 2.0", status: "future" },
+      { name: "לשונית הצגות + מכירה למוסדות", status: "future" as const },
+      { name: "סיפורים באנגלית + צרפתית", status: "future" as const },
+      { name: "AI בקול מנחם (11Labs)", status: "future" as const },
+      { name: "חבילה שנתית + Premium", status: "future" as const },
+      { name: "קמפיין חנוכה 2.0", status: "future" as const },
+    ],
+  },
+  {
+    quarter: "2027 — הרחבה",
+    emoji: "🌍",
+    items: [
+      { name: "NigunQuest — השקת אפליקציית בר מצווה", status: "future" as const },
+      { name: "מוניטיזציה של הקהילה החינמית", status: "future" as const },
     ],
   },
 ]
 
-const STATUS_COLORS: Record<string, string> = {
-  ready: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-  planned: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-  future: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400",
-}
-const STATUS_LABELS: Record<string, string> = { ready: "מוכן להתחלה", planned: "מתוכנן", future: "עתידי" }
-
-/* ── helpers ────────────────────────────────────────── */
-
-function SectionTitle({ children, subtitle }: { children: React.ReactNode; subtitle?: string }) {
-  return (
-    <div className="text-center mb-12">
-      <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">{children}</h2>
-      {subtitle && <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">{subtitle}</p>}
-    </div>
-  )
+const STATUS_STYLES = {
+  ready: { bg: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300", dot: "text-emerald-500", label: "מוכן עכשיו" },
+  planned: { bg: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", dot: "text-amber-500", label: "מתוכנן" },
+  future: { bg: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400", dot: "text-slate-400", label: "עתידי" },
 }
 
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="text-center p-4">
-      <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-amber-500 to-orange-500 bg-clip-text text-transparent">{value}</div>
-      <div className="mt-1 text-sm text-muted-foreground">{label}</div>
-    </div>
-  )
+const CAT_LABELS: Record<string, { label: string; color: string }> = {
+  core: { label: "תשתית", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
+  growth: { label: "צמיחה", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  content: { label: "חוויה", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" },
+  future: { label: "עתידי", color: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400" },
+  special: { label: "פרויקט מיוחד", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
+}
+
+const RETAINER_ITEMS = [
+  { icon: BarChart3, title: "דשבורד יומי אוטומטי", desc: "בכל בוקר, נתונים מעודכנים ישירות לוואטסאפ" },
+  { icon: Wrench, title: "תחזוקת אוטומציות", desc: "Make.com scenarios, webhooks, APIs — הכל רץ" },
+  { icon: Zap, title: "טיפול בתקלות טכניות", desc: "בעיה? מטפל תוך 24 שעות" },
+  { icon: Link, title: "עדכון לינקים בקבוצות", desc: "כשנפתחת קבוצה חדשה — הכל מתעדכן" },
+  { icon: FileBarChart, title: "דוח חודשי מפורט", desc: "הכנסות, churn, צמיחה, המלצות" },
+  { icon: Database, title: "גיבוי ועדכוני אבטחה", desc: "Supabase + אתר — הכל מעודכן ומגובה" },
+  { icon: MonitorSmartphone, title: "ניטור 24/7", desc: "התראות על כשלים בזמן אמת" },
+]
+
+const STRATEGY_ITEMS = [
+  "פגישת אסטרטגיה חודשית (60 דקות)",
+  "תכנון הקמפיין הבא — מהתחלה ועד סוף",
+  "סקירת מדדים והמלצות מעשיות",
+  "תכנון roadmap רבעוני — 3 חודשים קדימה",
+]
+
+/* ── helpers ─────────────────────────────────────────── */
+
+function discountedPrice(original: number): number {
+  return Math.round(original * (1 - DISCOUNT))
 }
 
 /* ── component ─────────────────────────────────────── */
 
 export function ProposalClient() {
-  const [selected, setSelected] = useState<Set<string>>(() => new Set(ALL_PROJECTS.filter(p => p.priority === "critical").map(p => p.id)))
+  const [selected, setSelected] = useState<Set<string>>(() =>
+    new Set(["campaign-flight", "automation", "dashboard", "winback", "evergreen", "onboarding"])
+  )
   const [order, setOrder] = useState<string[]>(ALL_PROJECTS.map(p => p.id))
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
+  const [strategySession, setStrategySession] = useState(false)
+  const dragItem = useRef<string | null>(null)
+  const dragOver = useRef<string | null>(null)
 
-  function toggle(id: string) {
+  const toggle = useCallback((id: string) => {
     setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
+      const n = new Set(prev)
+      if (n.has(id)) n.delete(id)
+      else n.add(id)
+      return n
     })
-  }
+  }, [])
 
-  function moveUp(id: string) {
-    setOrder(prev => {
-      const idx = prev.indexOf(id)
-      if (idx <= 0) return prev
-      const next = [...prev]
-      ;[next[idx - 1], next[idx]] = [next[idx], next[idx - 1]]
-      return next
+  const toggleExpand = useCallback((id: string) => {
+    setExpanded(prev => {
+      const n = new Set(prev)
+      if (n.has(id)) n.delete(id)
+      else n.add(id)
+      return n
     })
-  }
+  }, [])
 
-  function moveDown(id: string) {
+  function handleDragStart(id: string) { dragItem.current = id }
+  function handleDragEnter(id: string) { dragOver.current = id }
+  function handleDragEnd() {
+    if (!dragItem.current || !dragOver.current || dragItem.current === dragOver.current) return
     setOrder(prev => {
-      const idx = prev.indexOf(id)
-      if (idx >= prev.length - 1) return prev
       const next = [...prev]
-      ;[next[idx], next[idx + 1]] = [next[idx + 1], next[idx]]
+      const fromIdx = next.indexOf(dragItem.current!)
+      const toIdx = next.indexOf(dragOver.current!)
+      const [removed] = next.splice(fromIdx, 1)
+      next.splice(toIdx, 0, removed)
       return next
     })
+    dragItem.current = null
+    dragOver.current = null
   }
 
   const orderedProjects = order.map(id => ALL_PROJECTS.find(p => p.id === id)!).filter(Boolean)
   const selectedProjects = orderedProjects.filter(p => selected.has(p.id))
-  const totalPrice = selectedProjects.reduce((s, p) => s + p.price, 0)
+  const totalOriginal = selectedProjects.reduce((s, p) => s + p.originalPrice, 0)
+  const totalDiscounted = selectedProjects.reduce((s, p) => s + discountedPrice(p.originalPrice), 0)
+  const totalSaved = totalOriginal - totalDiscounted
   const totalWeeks = selectedProjects.reduce((s, p) => s + p.weeks, 0)
+  const monthlyRetainer = 2000 + (strategySession ? 500 : 0)
 
-  // Build WhatsApp message with selection
   const waMsg = encodeURIComponent(
-    `מנחם, בחרתי את הפרויקטים הבאים:\n\n` +
-    selectedProjects.map((p, i) => `${i + 1}. ${p.name} — ${fmtCurrency(p.price)}`).join("\n") +
-    `\n\nסה"כ: ${fmtCurrency(totalPrice)} | ${totalWeeks} שבועות\n+ תחזוקה ₪2,000/חודש\n+ 15% ממנויים חדשים\n\nבוא נדבר!`
+    `מנחם, הנה הפרויקטים שבחרתי לפי סדר עדיפויות:\n\n` +
+    selectedProjects.map((p, i) =>
+      `${i + 1}. ${p.name} — ${fmtCurrency(discountedPrice(p.originalPrice))} (${p.weeks} שב')`
+    ).join("\n") +
+    `\n\nסה"כ פרויקטים: ${fmtCurrency(totalDiscounted)} (אחרי הנחה 30%)` +
+    `\nחסכת: ${fmtCurrency(totalSaved)}` +
+    `\n+ תחזוקה ${fmtCurrency(monthlyRetainer)}/חודש` +
+    (strategySession ? ` (כולל פגישת אסטרטגיה)` : "") +
+    `\n+ 15% ממנויים חדשים (לא ישנים)\n\nבוא נדבר!`
   )
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
+
+      {/* ═══════════════════ HERO ═══════════════════ */}
       <section className="relative overflow-hidden gradient-warm">
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/10 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-4 py-1.5 mb-6">
-            <Zap className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium text-primary">הצעת שיתוף פעולה</span>
-          </div>
+          <p className="text-lg text-muted-foreground mb-4">מנחם, שב נוח. יש לנו הרבה מה לדבר.</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-            סיפורון 2026
+            מ-₪2,110 ל-₪45,216
             <br />
             <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              מפת דרכים + הצעת מחיר
+              ב-8 חודשים. צמיחה של x21.
             </span>
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            מ-₪2,110 ל-₪45,216 ב-8 חודשים. עכשיו הזמן לבנות את התשתית שתיקח אותנו ל-₪100K.
+          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            בנית קהילה של 17,000 משפחות. 200+ סיפורים. ₪227K הכנסה.
+            <br className="hidden sm:block" />
+            עכשיו הזמן לבנות את התשתית שתיקח את סיפורון ל-₪100K ומעלה.
           </p>
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-            {STATS.map(s => <Stat key={s.label} {...s} />)}
+
+          {/* Stats grid */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+            {[
+              { value: "₪227,669", label: "הכנסה כוללת" },
+              { value: "x21", label: "צמיחה ב-8 חודשים" },
+              { value: "944", label: "מנויים פעילים" },
+              { value: "17,000", label: "חברי קהילה" },
+            ].map(s => (
+              <div key={s.label} className="text-center">
+                <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-amber-500 to-orange-500 bg-clip-text text-transparent">
+                  {s.value}
+                </div>
+                <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
+              </div>
+            ))}
           </div>
+
+          {/* Extended stats row */}
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
+            {[
+              { value: "~1,300", label: "חברי מועדון" },
+              { value: "18", label: "קבוצות WhatsApp" },
+              { value: "12,250", label: "כניסות לבוט" },
+              { value: "87-90%", label: "המרה 5₪→45₪" },
+            ].map(s => (
+              <div key={s.label} className="text-center rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm p-3">
+                <div className="text-xl sm:text-2xl font-bold text-foreground">{s.value}</div>
+                <div className="text-xs text-muted-foreground">{s.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 text-xs text-muted-foreground">
+            10 מבצעי שיתופים מוצלחים | 88% מהכניסות לבוט = referral | הנתונים נשלפו ישירות מ-Cardcom, Green API והבוט
+          </p>
         </div>
       </section>
 
-      {/* Status */}
+      {/* ═══════════════════ WHERE WE STAND ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <SectionTitle subtitle="מספרים אמיתיים מ-Cardcom + Green API + Bot">איפה אנחנו עומדים</SectionTitle>
+        <h2 className="text-3xl font-extrabold text-center mb-3">איפה אנחנו עומדים</h2>
+        <p className="text-center text-muted-foreground mb-10">מספרים אמיתיים — שלפתי ישירות מ-Cardcom, Green API והבוט</p>
+
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <h3 className="font-bold text-lg mb-4 text-emerald-600">מה עובד מצוין ✅</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• 10 מבצעי שיתופים — 17,000 חברים בקהילה</li>
-              <li>• Conversion מ-5₪ ל-45₪: <strong>87-90%</strong></li>
-              <li>• Flywheel מוכח: קמפיין → קבוצה → השקה → מנויים</li>
-              <li>• 200+ סיפורים, תוכן שמוכר את עצמו</li>
-              <li>• Churn ירד ל-7.3% — שיפור מתמיד</li>
+            <h3 className="font-bold text-lg mb-4 text-emerald-600 flex items-center gap-2">
+              <CheckCircle className="h-5 w-5" /> מה עובד מצוין
+            </h3>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>10 מבצעי שיתופים מוצלחים — 17,000 חברים ב-18 קבוצות</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>Conversion מ-5₪ ל-45₪: <strong>87-90%</strong> — מטורף</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>12,250 כניסות לבוט — 88% מהפניות אורגניות</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>Flywheel מוכח שעובד כל פעם מחדש</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                <span>200+ סיפורים — התוכן מוכר את עצמו</span>
+              </li>
             </ul>
           </div>
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <h3 className="font-bold text-lg mb-4 text-red-500">מה צריך לתקן 🔴</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• <strong>108 מנויים עזבו בשקט</strong> — אין מערכת dunning</li>
-              <li>• <strong>309 לא המירו</strong> מ-5₪ ל-45₪</li>
-              <li>• ביטול ידני ב-3 מערכות</li>
-              <li>• אפריל: <strong>5 כניסות לבוט</strong> — Flywheel עומד!</li>
-              <li>• אין דשבורד — החלטות מתחושת בטן</li>
+            <h3 className="font-bold text-lg mb-4 text-red-500 flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5" /> מה נופל בין הכיסאות
+            </h3>
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li className="flex gap-2">
+                <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
+                <span><strong>108 מנויים עזבו בשקט</strong> — אין מערכת שמזהה ומטפלת</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
+                <span><strong>309 שילמו 5₪ ולא המירו</strong> — כסף על הרצפה</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
+                <span>ביטול = עבודה ידנית ב-3 מערכות. אין dunning, אין exit survey</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
+                <span>אפריל: <strong>5 כניסות לבוט ביום</strong> — ה-Flywheel עומד</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
+                <span>אין דשבורד — מנהלים עסק של ₪45K מתחושת בטן</span>
+              </li>
             </ul>
           </div>
         </div>
       </section>
 
-      {/* Interactive projects */}
+      {/* ═══════════════════ CHURN DEEP DIVE ═══════════════════ */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-6 sm:p-8">
+          <h3 className="text-xl font-extrabold text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
+            <TrendingDown className="h-5 w-5" />
+            מנחם, הנה מה שקורה מתחת לרדאר
+          </h3>
+          <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-6">
+            המספרים האלה לא נראים בשום מקום — כי אין דשבורד. שלפתי אותם ידנית.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+            {[
+              { value: "108", label: "עזבו בשקט", sub: "מנויים ששילמו ונעלמו" },
+              { value: "309", label: "לא המירו", sub: "שילמו 5₪ ונתקעו" },
+              { value: "37%", label: "עוזבים בחודש 1", sub: "Onboarding שבור" },
+              { value: "78%", label: "בלי בקשת החזר", sub: "פשוט נעלמו" },
+            ].map(s => (
+              <div key={s.label} className="bg-white dark:bg-slate-800 rounded-xl p-4 text-center shadow-sm">
+                <div className="text-2xl sm:text-3xl font-extrabold text-red-600 dark:text-red-400">{s.value}</div>
+                <div className="text-xs font-bold text-red-700 dark:text-red-300 mt-1">{s.label}</div>
+                <div className="text-[10px] text-muted-foreground mt-0.5">{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4 text-sm text-muted-foreground space-y-2">
+            <p><strong className="text-foreground">סה&quot;כ לידים חמים:</strong> 417 אנשים ששילמו לנו כסף ונעלמו. לכל אחד יש שם, טלפון, ומייל ב-Cardcom.</p>
+            <p><strong className="text-foreground">מה חסר:</strong> אין dunning (הודעה כשאשראי נכשל), אין exit survey (למה עזבו), אין ניסיון להחזיר אף אחד.</p>
+            <p className="text-red-600 dark:text-red-400 font-medium">כל חודש שעובר בלי טיפול = עוד 40-70 מנויים שזולגים החוצה.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ WITHOUT ME vs WITH ME ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <SectionTitle subtitle="בחר את הפרויקטים שחשובים לך. דרג לפי סדר עדיפויות. הצעת מחיר מתעדכנת בזמן אמת.">
-          בחר פרויקטים ודרג
-        </SectionTitle>
+        <h2 className="text-3xl font-extrabold text-center mb-3">שני תרחישים</h2>
+        <p className="text-center text-muted-foreground mb-10">מנחם, תבחר איפה אתה רוצה להיות בעוד 6 חודשים</p>
+
+        <div className="grid sm:grid-cols-2 gap-6">
+          {/* WITHOUT */}
+          <div className="rounded-2xl border-2 border-red-200 dark:border-red-800/30 bg-red-50/50 dark:bg-red-950/10 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <X className="h-5 w-5 text-red-500" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-red-700 dark:text-red-400">בלי יוסף</h3>
+                <p className="text-xs text-muted-foreground">מה קורה אם ממשיכים כמו היום</p>
+              </div>
+            </div>
+            <ul className="space-y-3 text-sm">
+              {[
+                "Flywheel קפוא — 5 כניסות ביום",
+                "60+ מנויים עוזבים בשקט כל חודש",
+                "ביטול = עבודה ידנית ב-3 מערכות",
+                "אין דשבורד — החלטות מתחושת בטן",
+                "אין dunning = כסף שדולף",
+                "קמפיינים ספונטניים — לפעמים 0 חודשים",
+                "417 לידים חמים שיושבים ומתקררים",
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <X className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-red-700 dark:text-red-300">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* WITH */}
+          <div className="rounded-2xl border-2 border-emerald-200 dark:border-emerald-800/30 bg-emerald-50/50 dark:bg-emerald-950/10 p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                <Check className="h-5 w-5 text-emerald-500" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-emerald-700 dark:text-emerald-400">עם יוסף</h3>
+                <p className="text-xs text-muted-foreground">מה קורה כשבונים את התשתית</p>
+              </div>
+            </div>
+            <ul className="space-y-3 text-sm">
+              {[
+                "Flywheel תמיד דולק — 200+ כניסות/יום בקמפיינים",
+                "Dunning תופס תשלומים כושלים אוטומטית",
+                "Exit survey אומר לך למה אנשים עוזבים",
+                "דשבורד כל בוקר ב-08:00 — נתונים חיים",
+                "Win-back מחזיר מנויים שעזבו",
+                "לוח שנה שנתי = 0 חודשים ריקים",
+                "פלטפורמה אחת מחליפה 5 כלים נפרדים",
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2">
+                  <Check className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                  <span className="text-emerald-700 dark:text-emerald-300">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ DISCOUNT GIFT BANNER ═══════════════════ */}
+      <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="rounded-2xl bg-gradient-to-l from-amber-100 via-orange-100 to-amber-100 dark:from-amber-900/20 dark:via-orange-900/20 dark:to-amber-900/20 border-2 border-amber-300 dark:border-amber-700 p-6 sm:p-8 text-center">
+          <div className="text-4xl mb-3">🎁</div>
+          <h3 className="text-2xl font-extrabold text-amber-800 dark:text-amber-300 mb-2">
+            מתנה ממני אליך — 30% הנחה על כל הפרויקטים
+          </h3>
+          <p className="text-sm text-amber-700 dark:text-amber-400 max-w-lg mx-auto leading-relaxed">
+            מנחם, אני מאמין בעסק הזה. אני רוצה שנתחיל לעבוד ביחד בלי שהמחיר יהיה חסם.
+            <br />
+            כל הפרויקטים למטה כוללים 30% הנחה — מחיר מקורי מסומן, מחיר אחרי הנחה בולט.
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 bg-white dark:bg-slate-800 rounded-xl px-5 py-2.5 shadow-sm">
+            <Sparkles className="h-4 w-4 text-amber-500" />
+            <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+              חסכון של עד {fmtCurrency(Math.round(ALL_PROJECTS.reduce((s, p) => s + p.originalPrice, 0) * DISCOUNT))} על כל הפרויקטים
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ PROJECTS ═══════════════════ */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <h2 className="text-3xl font-extrabold text-center mb-3">18 פרויקטים — בחר מה חשוב לך</h2>
+        <p className="text-center text-muted-foreground mb-4 max-w-2xl mx-auto">
+          מנחם, בחר את הפרויקטים שחשובים לך.
+          <br />
+          גרור כדי לשנות סדר עדיפויות. לחץ על פרויקט לפרטים מלאים.
+        </p>
+        <p className="text-center text-xs text-muted-foreground mb-10">
+          ↕️ גרור להזזה &nbsp; | &nbsp; ✅ לחץ לבחירה &nbsp; | &nbsp; 📖 לחץ על השם לפרטים
+        </p>
+
+        {/* Category legend */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          {Object.entries(CAT_LABELS).map(([key, cat]) => (
+            <span key={key} className={`text-[10px] font-medium rounded-full px-3 py-1 ${cat.color}`}>
+              {cat.label}
+            </span>
+          ))}
+        </div>
 
         <div className="space-y-3">
           {orderedProjects.map((p, idx) => {
             const Icon = p.icon
-            const isSelected = selected.has(p.id)
-            const cat = CATEGORY_LABELS[p.category]
-            const pri = PRIORITY_LABELS[p.priority]
+            const isSel = selected.has(p.id)
+            const isExp = expanded.has(p.id)
+            const cat = CAT_LABELS[p.category]
+            const discounted = discountedPrice(p.originalPrice)
+            const saved = p.originalPrice - discounted
 
             return (
               <div
                 key={p.id}
-                className={`rounded-2xl border-2 p-4 sm:p-5 transition-all cursor-pointer ${
-                  isSelected
-                    ? "border-primary/40 bg-primary/5 shadow-md"
-                    : "border-transparent bg-card shadow-sm opacity-60 hover:opacity-80"
+                draggable
+                onDragStart={() => handleDragStart(p.id)}
+                onDragEnter={() => handleDragEnter(p.id)}
+                onDragEnd={handleDragEnd}
+                onDragOver={e => e.preventDefault()}
+                className={`rounded-2xl border-2 transition-all duration-200 ${
+                  isSel
+                    ? "border-primary/30 bg-primary/5 shadow-md"
+                    : "border-transparent bg-card shadow-sm opacity-50 hover:opacity-75"
                 }`}
-                onClick={() => toggle(p.id)}
               >
-                <div className="flex items-start gap-3">
-                  {/* Rank controls */}
-                  <div className="flex flex-col items-center gap-0.5 flex-shrink-0 pt-1" onClick={e => e.stopPropagation()}>
-                    <button onClick={() => moveUp(p.id)} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="הזז למעלה">
-                      <ArrowUp className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
-                    <span className="text-xs font-bold text-muted-foreground w-5 text-center">{idx + 1}</span>
-                    <button onClick={() => moveDown(p.id)} className="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="הזז למטה">
-                      <ArrowDown className="h-3.5 w-3.5 text-muted-foreground" />
-                    </button>
+                {/* Main row */}
+                <div className="flex items-center gap-2 sm:gap-3 p-4 sm:p-5">
+                  {/* Drag handle */}
+                  <div className="flex-shrink-0 cursor-grab active:cursor-grabbing touch-none">
+                    <GripVertical className="h-5 w-5 text-muted-foreground/50" />
+                  </div>
+
+                  {/* Rank */}
+                  <div className={`flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isSel ? "bg-primary text-white" : "bg-slate-200 dark:bg-slate-700 text-muted-foreground"
+                  }`}>
+                    {idx + 1}
                   </div>
 
                   {/* Checkbox */}
-                  <div className="flex-shrink-0 pt-1">
-                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${
-                      isSelected ? "border-primary bg-primary" : "border-slate-300 dark:border-slate-600"
-                    }`}>
-                      {isSelected && <CheckCircle className="h-4 w-4 text-white" />}
-                    </div>
-                  </div>
+                  <button
+                    onClick={e => { e.stopPropagation(); toggle(p.id) }}
+                    className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors ${
+                      isSel ? "border-primary bg-primary" : "border-slate-300 dark:border-slate-600 hover:border-primary/50"
+                    }`}
+                    aria-label={isSel ? `הסר ${p.name}` : `בחר ${p.name}`}
+                  >
+                    {isSel && <CheckCircle className="h-4 w-4 text-white" />}
+                  </button>
 
                   {/* Icon */}
                   <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -388,27 +678,98 @@ export function ProposalClient() {
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <button onClick={() => toggleExpand(p.id)} className="flex-1 min-w-0 text-right">
+                    <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-bold text-sm sm:text-base">{p.name}</h3>
                       <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 ${cat.color}`}>{cat.label}</span>
-                      <span className={`text-[10px] font-bold ${pri.color}`}>{pri.label}</span>
                       <span className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground">
-                        <Clock className="h-2.5 w-2.5" /> {p.weeks} שב׳
+                        <Clock className="h-2.5 w-2.5" /> {p.weeks} {p.weeks === 1 ? "שבוע" : "שבועות"}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{p.description}</p>
-                    <div className="flex flex-wrap gap-3 text-[10px]">
+                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{p.subtitle}</p>
+                  </button>
+
+                  {/* Price with discount */}
+                  <div className="flex-shrink-0 text-left flex items-center gap-2">
+                    <div className="flex flex-col items-end">
+                      <div className="text-xs text-muted-foreground line-through">
+                        {fmtCurrency(p.originalPrice)}
+                      </div>
+                      <div className={`text-lg sm:text-2xl font-extrabold ${isSel ? "text-primary" : "text-muted-foreground"}`}>
+                        {fmtCurrency(discounted)}
+                      </div>
+                    </div>
+                    <button onClick={() => toggleExpand(p.id)} className="p-1">
+                      {isExp ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Expanded details */}
+                {isExp && (
+                  <div className="px-5 pb-5 mr-[4.5rem] sm:mr-20 border-t border-dashed pt-4 space-y-3">
+                    <p className="text-sm text-foreground leading-relaxed">{p.description}</p>
+                    <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 p-3">
+                      <p className="text-xs font-bold text-amber-800 dark:text-amber-300 mb-1">למה עכשיו?</p>
+                      <p className="text-xs text-amber-700 dark:text-amber-400">{p.whyNow}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-4 text-xs">
                       <span className="text-emerald-600 dark:text-emerald-400"><strong>אימפקט:</strong> {p.impact}</span>
-                      <span className="text-slate-500"><strong>מחליף:</strong> {p.replaces}</span>
+                      <span className="text-slate-500 dark:text-slate-400"><strong>מחליף:</strong> {p.replaces}</span>
+                      <span className="text-amber-600 dark:text-amber-400">
+                        <strong>חסכת:</strong> {fmtCurrency(saved)} ({Math.round(DISCOUNT * 100)}% הנחה)
+                      </span>
                     </div>
                   </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
 
-                  {/* Price */}
-                  <div className="flex-shrink-0 text-left">
-                    <div className={`text-xl sm:text-2xl font-extrabold ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                      {fmtCurrency(p.price)}
-                    </div>
+        {/* ── Sticky total bar ── */}
+        <div className="sticky bottom-4 mt-8 rounded-2xl bg-gradient-to-l from-amber-500 to-orange-500 text-white p-4 sm:p-6 shadow-2xl z-10">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <div className="text-sm opacity-90">
+                {selectedProjects.length} פרויקטים נבחרו | ~{totalWeeks} שבועות עבודה
+              </div>
+              <div className="flex items-baseline gap-3">
+                <div className="text-3xl sm:text-4xl font-extrabold">{fmtCurrency(totalDiscounted)}</div>
+                <div className="text-base line-through opacity-60">{fmtCurrency(totalOriginal)}</div>
+              </div>
+              <div className="text-xs opacity-80 mt-0.5">
+                חסכת {fmtCurrency(totalSaved)} עם הנחת 30%
+              </div>
+            </div>
+            <div className="text-sm opacity-90 text-left leading-relaxed">
+              <div>+ תחזוקה {fmtCurrency(monthlyRetainer)}/חודש</div>
+              <div>+ 15% ממנויים חדשים בלבד</div>
+              <div className="text-xs opacity-75">₪0 על מנויים ישנים</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════ RETAINER DETAIL ═══════════════════ */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <h2 className="text-3xl font-extrabold text-center mb-3">תחזוקה חודשית — {fmtCurrency(2000)}/חודש</h2>
+        <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
+          מנחם, זה לא &quot;תמיכה טכנית&quot;. זה אדם שמחזיק את כל המערכות שלך רצות, כל יום, 24/7.
+        </p>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {RETAINER_ITEMS.map(item => {
+            const Icon = item.icon
+            return (
+              <div key={item.title} className="rounded-2xl border bg-card p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm">{item.title}</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
                   </div>
                 </div>
               </div>
@@ -416,103 +777,265 @@ export function ProposalClient() {
           })}
         </div>
 
-        {/* Sticky total */}
-        <div className="sticky bottom-4 mt-8 rounded-2xl bg-gradient-to-l from-amber-500 to-orange-500 text-white p-4 sm:p-6 shadow-2xl">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="text-sm opacity-90">{selectedProjects.length} פרויקטים נבחרו | ~{totalWeeks} שבועות</div>
-              <div className="text-3xl sm:text-4xl font-extrabold">{fmtCurrency(totalPrice)}</div>
+        {/* Why can't do alone */}
+        <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/50 border p-5 mb-8">
+          <h4 className="font-bold text-sm mb-2 flex items-center gap-2">
+            <Shield className="h-4 w-4 text-primary" />
+            למה אי אפשר לעשות את זה לבד?
+          </h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            דורש ידע ב-API (ל-Cardcom, Green API), מומחיות ב-Make.com, ניהול Supabase, ותחזוקת קוד.
+            זו לא משימה לאדם לא טכני. צריך מישהו שמכיר את כל הרכיבים ויודע לתקן כשמשהו נשבר — ומשהו תמיד נשבר.
+          </p>
+        </div>
+
+        {/* Strategy session toggle */}
+        <div className={`rounded-2xl border-2 p-6 transition-all ${
+          strategySession
+            ? "border-primary/30 bg-primary/5 shadow-md"
+            : "border-dashed border-slate-300 dark:border-slate-600"
+        }`}>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                <BookOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <h4 className="font-bold text-sm">תוסף: פגישת אסטרטגיה חודשית</h4>
+                <p className="text-xs text-muted-foreground">+{fmtCurrency(500)}/חודש — סה&quot;כ {fmtCurrency(2500)}/חודש</p>
+              </div>
             </div>
-            <div className="text-sm opacity-90 text-left">
-              <div>+ תחזוקה {fmtCurrency(2000)}/חודש</div>
-              <div>+ 15% ממנויים חדשים</div>
-            </div>
+            <button
+              onClick={() => setStrategySession(prev => !prev)}
+              className={`relative w-14 h-7 rounded-full transition-colors ${
+                strategySession ? "bg-primary" : "bg-slate-300 dark:bg-slate-600"
+              }`}
+              aria-label="הוסף/הסר פגישת אסטרטגיה"
+            >
+              <div className={`absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all ${
+                strategySession ? "left-0.5" : "left-7"
+              }`} />
+            </button>
           </div>
+
+          {strategySession && (
+            <div className="mt-4 mr-[3.25rem] space-y-2">
+              {STRATEGY_ITEMS.map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Check className="h-3.5 w-3.5 text-purple-500 flex-shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Ongoing */}
+      {/* ═══════════════════ PAYMENT MODEL ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <SectionTitle subtitle="מה שקורה כל חודש — בלי קשר לפרויקטים">תחזוקה + אחוזים</SectionTitle>
-        <div className="grid sm:grid-cols-3 gap-6">
-          <div className="rounded-2xl border bg-card p-6 shadow-sm text-center">
-            <div className="text-3xl font-extrabold text-primary mb-2">{fmtCurrency(2000)}</div>
-            <div className="font-bold mb-2">תחזוקה חודשית</div>
-            <p className="text-xs text-muted-foreground">דשבורד יומי, אוטומציות, תקלות, עדכון לינקים, מענה לבעיות</p>
-          </div>
-          <div className="rounded-2xl border bg-card p-6 shadow-sm text-center">
-            <div className="text-3xl font-extrabold text-primary mb-2">15%</div>
-            <div className="font-bold mb-2">ממנויים חדשים</div>
-            <p className="text-xs text-muted-foreground">
-              רק מנויים שהצטרפו בתקופת ההסכם.
-              מחודש 2 (45₪). למשך 12 חודש. מנויים ישנים = ₪0.
+        <h2 className="text-3xl font-extrabold text-center mb-3">איך זה עובד</h2>
+        <p className="text-center text-muted-foreground mb-10">שקוף לגמרי. אתה יודע על מה אתה משלם.</p>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="text-3xl font-extrabold text-primary mb-3">1</div>
+            <p className="text-sm font-bold mb-2">פרויקטים</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              הצעת מחיר לכל פרויקט — <strong>כולל 30% הנחה</strong>.
+              <br /><br />
+              אתה מאשר מראש. 50% בהתחלה, 50% במסירה.
+              לא מאשר? לא משלם. פשוט.
             </p>
           </div>
-          <div className="rounded-2xl border bg-card p-6 shadow-sm text-center">
-            <div className="text-3xl font-extrabold text-primary mb-2">₪0</div>
-            <div className="font-bold mb-2">על מנויים ישנים</div>
-            <p className="text-xs text-muted-foreground">מנויים שהצטרפו לפני ההסכם? <strong>אפס.</strong> אני מקבל רק על מה שאני מביא.</p>
+
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="text-3xl font-extrabold text-primary mb-3">
+              {fmtCurrency(2000)}<span className="text-base text-muted-foreground">/חודש</span>
+            </div>
+            <p className="text-sm font-bold mb-2">תחזוקה שוטפת</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              דשבורד יומי, תחזוקת אוטומציות, טיפול בתקלות, עדכון לינקים, גיבוי, ניטור 24/7.
+              <br /><br />
+              אופציה: +{fmtCurrency(500)} לפגישת אסטרטגיה חודשית.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="text-3xl font-extrabold text-primary mb-3">15%</div>
+            <p className="text-sm font-bold mb-2">ממנויים חדשים בלבד</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              רק מנויים שהצטרפו בזמן ההסכם.
+              רק מחודש 2 (כשמשלמים 45₪).
+              למשך 12 חודש. אחרי זה — שלך 100%.
+              <br /><br />
+              <strong className="text-foreground">מנויים ישנים? ₪0. אפס. נאדא.</strong>
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <div className="text-3xl font-extrabold text-primary mb-3">🏆</div>
+            <p className="text-sm font-bold mb-2">בונוסי אבני דרך</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              כשמגיעים ליעדי צמיחה ביחד — בונוס חד-פעמי.
+              <br /><br />
+              {MILESTONES.map(m => (
+                <span key={m.target} className="block">
+                  {m.icon} {m.target} = {fmtCurrency(m.bonus)}
+                </span>
+              ))}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Milestones */}
+      {/* ═══════════════════ MILESTONES ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <SectionTitle subtitle="בונוסים חד-פעמיים כשמגיעים לאבני דרך ביחד">בונוסי צמיחה</SectionTitle>
+        <h2 className="text-3xl font-extrabold text-center mb-3">בונוסי צמיחה</h2>
+        <p className="text-center text-muted-foreground mb-10">כשמגיעים לאבני דרך ביחד — חוגגים ביחד</p>
+
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {MILESTONES.map(m => (
-            <div key={m.target} className="rounded-2xl border bg-card p-5 shadow-sm text-center">
-              <div className="text-3xl mb-2">{m.icon}</div>
+            <div key={m.target} className="rounded-2xl border bg-card p-5 shadow-sm text-center hover:shadow-md transition-shadow">
+              <div className="text-4xl mb-3">{m.icon}</div>
               <div className="font-bold text-sm mb-1">{m.target}</div>
-              <div className="text-xl font-extrabold text-primary">{fmtCurrency(m.bonus)}</div>
-              <div className="text-[10px] text-muted-foreground mt-1">חד-פעמי</div>
+              <div className="text-2xl font-extrabold text-primary">{fmtCurrency(m.bonus)}</div>
+              <div className="text-[10px] text-muted-foreground mt-1">בונוס חד-פעמי</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Roadmap */}
+      {/* ═══════════════════ ROADMAP ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <SectionTitle subtitle="3 רבעונים קדימה">מפת דרכים</SectionTitle>
+        <h2 className="text-3xl font-extrabold text-center mb-3">מפת דרכים</h2>
+        <p className="text-center text-muted-foreground mb-10">מאפריל 2026 עד 2027 — כל שלב ברור</p>
+
         <div className="space-y-8">
           {ROADMAP.map(q => (
             <div key={q.quarter}>
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-                <ArrowLeft className="h-5 w-5 text-primary" />{q.quarter}
+                <span className="text-2xl">{q.emoji}</span> {q.quarter}
               </h3>
-              <div className="space-y-2 mr-7">
-                {q.items.map(item => (
-                  <div key={item.name} className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3">
-                    <CheckCircle className={`h-5 w-5 flex-shrink-0 ${item.status === "ready" ? "text-emerald-500" : item.status === "planned" ? "text-amber-500" : "text-slate-400"}`} />
-                    <span className="flex-1 text-sm font-medium">{item.name}</span>
-                    <span className={`text-[10px] font-medium rounded-full px-2 py-0.5 ${STATUS_COLORS[item.status]}`}>{STATUS_LABELS[item.status]}</span>
-                  </div>
-                ))}
+              <div className="space-y-2 mr-10">
+                {q.items.map(item => {
+                  const st = STATUS_STYLES[item.status]
+                  return (
+                    <div key={item.name} className="flex items-center gap-3 rounded-xl border bg-card px-4 py-3">
+                      <CheckCircle className={`h-5 w-5 flex-shrink-0 ${st.dot}`} />
+                      <span className="flex-1 text-sm font-medium">{item.name}</span>
+                      <span className={`text-[10px] font-medium rounded-full px-2.5 py-0.5 ${st.bg}`}>{st.label}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
-          בוא נבנה את זה <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">ביחד.</span>
-        </h2>
-        <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto">
-          אם יש עבודה — יש תשלום. אין עבודה — אין תשלום. שותפים לצמיחה.
-        </p>
-        <a
-          href={`https://wa.me/972532208749?text=${waMsg}`}
-          className="inline-flex items-center gap-2 bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
-        >
-          <Star className="h-5 w-5" />
-          אני מאשר — בוא נתחיל
-        </a>
+      {/* ═══════════════════ SUMMARY ═══════════════════ */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="rounded-2xl border-2 border-primary/20 bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-slate-800/50 dark:to-slate-900/50 p-8">
+          <h2 className="text-2xl font-extrabold mb-6 text-center">סיכום ההסכם</h2>
+          <div className="space-y-5 text-sm max-w-2xl mx-auto">
+            <div className="flex gap-3">
+              <span className="text-primary text-lg font-bold">1.</span>
+              <div>
+                <strong>פרויקטים</strong> — הצעת מחיר נפרדת לכל אחד, <strong>כולל 30% הנחה</strong>. אישור מראש. 50% בהתחלה, 50% במסירה.
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-primary text-lg font-bold">2.</span>
+              <div>
+                <strong>תחזוקה — {fmtCurrency(2000)}/חודש</strong> — דשבורד יומי, אוטומציות, תקלות, לינקים, גיבוי, ניטור 24/7. ביטול בהתראה של 30 יום.
+                {strategySession && (
+                  <span className="text-purple-600 dark:text-purple-400"> + פגישת אסטרטגיה {fmtCurrency(500)}/חודש</span>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-primary text-lg font-bold">3.</span>
+              <div>
+                <strong>15% ממנויים חדשים</strong> — רק מנויים חדשים, רק מחודש 2 (45₪), למשך 12 חודש. מנויים ישנים = ₪0.
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-primary text-lg font-bold">4.</span>
+              <div>
+                <strong>בונוסי אבני דרך</strong> — חד-פעמיים כשמגיעים ליעדים ביחד.
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <span className="text-primary text-lg font-bold">5.</span>
+              <div>
+                <strong>תקופה</strong> — 6 חודשים + חידוש אוטומטי. כל צד יכול לסיים בהתראה של 30 יום.
+              </div>
+            </div>
+          </div>
+
+          {/* Quick summary numbers */}
+          <div className="mt-8 pt-6 border-t border-primary/10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">פרויקטים נבחרים</div>
+                <div className="text-2xl font-extrabold text-primary">{fmtCurrency(totalDiscounted)}</div>
+                <div className="text-xs text-muted-foreground line-through">{fmtCurrency(totalOriginal)}</div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">תחזוקה חודשית</div>
+                <div className="text-2xl font-extrabold text-primary">{fmtCurrency(monthlyRetainer)}</div>
+                <div className="text-xs text-muted-foreground">
+                  {strategySession ? "כולל אסטרטגיה" : "בלי אסטרטגיה"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-muted-foreground mb-1">חסכת</div>
+                <div className="text-2xl font-extrabold text-emerald-600">{fmtCurrency(totalSaved)}</div>
+                <div className="text-xs text-muted-foreground">הנחת 30% על פרויקטים</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
+      {/* ═══════════════════ CTA ═══════════════════ */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
+        <p className="text-lg text-muted-foreground mb-2">מנחם,</p>
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
+          בנית משהו מדהים.
+          <br />
+          <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
+            בוא נבנה את התשתית שתיקח את זה הלאה.
+          </span>
+        </h2>
+        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+          בחרת {selectedProjects.length} פרויקטים בסך {fmtCurrency(totalDiscounted)}
+          <span className="text-xs text-muted-foreground"> (חסכת {fmtCurrency(totalSaved)})</span>
+          <br />
+          + תחזוקה {fmtCurrency(monthlyRetainer)}/חודש
+          {strategySession && <span className="text-xs"> (כולל אסטרטגיה)</span>}
+          <br />
+          <span className="text-sm">לחץ כדי לשלוח לי את הבחירה שלך בוואטסאפ.</span>
+        </p>
+
+        <a
+          href={`https://wa.me/972532208749?text=${waMsg}`}
+          className="inline-flex items-center gap-3 bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all"
+        >
+          <Phone className="h-5 w-5" />
+          שלח בוואטסאפ ובוא נתחיל
+        </a>
+
+        <p className="mt-6 text-xs text-muted-foreground max-w-sm mx-auto">
+          אם יש עבודה — יש תשלום. אם אין — ₪0.
+          <br />
+          שותפים לצמיחה, לא שכירים.
+        </p>
+      </section>
+
+      {/* ═══════════════════ FOOTER ═══════════════════ */}
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">
-        הצעה זו חסויה ומיועדת למנחם שרון בלבד. סיפורון © 2026
+        הצעה זו חסויה ומיועדת למנחם שרון בלבד. נבנתה עם אהבה על ידי יוסף. סיפורון © 2026
       </footer>
     </div>
   )

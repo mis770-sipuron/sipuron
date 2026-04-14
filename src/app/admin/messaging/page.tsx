@@ -556,37 +556,39 @@ export default function MessagingDashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-foreground">
+        <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">
           הודעות ובוט
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           ניהול שידורים, תגובות בוט, קבוצות ואנשי קשר
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 rounded-lg bg-muted p-1 w-fit">
-        {TABS.map((tab) => {
-          const Icon = tab.icon
-          const isActive = activeTab === tab.key
-          return (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`
-                inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-all cursor-pointer
-                ${
-                  isActive
-                    ? "bg-background text-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground"
-                }
-              `}
-            >
-              <Icon className="h-4 w-4" />
-              {tab.label}
-            </button>
-          )
-        })}
+      <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 scrollbar-hide">
+        <div className="flex gap-1 rounded-lg bg-muted p-1 w-fit min-w-max">
+          {TABS.map((tab) => {
+            const Icon = tab.icon
+            const isActive = activeTab === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`
+                  inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all cursor-pointer whitespace-nowrap
+                  ${
+                    isActive
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }
+                `}
+              >
+                <Icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Tab Content */}

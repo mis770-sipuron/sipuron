@@ -96,7 +96,7 @@ export function SampleStories() {
         </div>
 
         <div className="text-center mt-10">
-          <Button variant="outline" size="lg" className="rounded-full" asChild>
+          <Button variant="outline" size="lg" className="w-full sm:w-auto rounded-full" asChild>
             <a href="/stories">לכל הסיפורים →</a>
           </Button>
         </div>

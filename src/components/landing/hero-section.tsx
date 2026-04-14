@@ -40,13 +40,13 @@ export function HeroSection() {
           {/* CTAs */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up"
             style={{ animationDelay: '0.3s' }}>
-            <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
+            <Button size="lg" asChild className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-lg px-8 py-6 rounded-full shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">
               <Link href="/join">
                 <Play className="h-5 w-5 ml-2 fill-current" />
                 להאזין בחינם
               </Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="text-lg px-8 py-6 rounded-full">
+            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-lg px-8 py-6 rounded-full">
               <Link href="/join">
                 להצטרף ב-₪5 בלבד
               </Link>

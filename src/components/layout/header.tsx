@@ -59,7 +59,7 @@ export function Header() {
           {/* Mobile */}
           <div className="flex md:hidden items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" onClick={() => setMobileOpen(!mobileOpen)}>
+            <Button variant="ghost" size="icon" className="h-11 w-11" onClick={() => setMobileOpen(!mobileOpen)}>
               <Menu className="h-5 w-5" />
             </Button>
           </div>
@@ -72,20 +72,20 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block text-base font-medium text-foreground/80 hover:text-primary transition-colors py-1"
+                className="block text-base font-medium text-foreground/80 hover:text-primary transition-colors py-3"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
             <div className="flex flex-col gap-2 pt-3 border-t">
-              <Button variant="outline" asChild>
+              <Button variant="outline" className="w-full h-11 text-base" asChild>
                 <Link href="/login" onClick={() => setMobileOpen(false)}>
                   <LogIn className="h-4 w-4 ml-2" />
                   כניסה
                 </Link>
               </Button>
-              <Button asChild>
+              <Button className="w-full h-11 text-base" asChild>
                 <Link href="/join" onClick={() => setMobileOpen(false)}>
                   להתחיל ב-₪5
                 </Link>

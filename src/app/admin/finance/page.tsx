@@ -141,14 +141,14 @@ export default function FinanceDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground">דשבורד כספים</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground">דשבורד כספים</h1>
           <p className="text-muted-foreground text-sm">
             נתוני הכנסות, מנויים ותשלומים — {new Date().toLocaleDateString("he-IL")}
           </p>
         </div>
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto" asChild>
           <Link href="/admin">
             <RotateCcw className="h-4 w-4 ml-2" />
             חזרה לסקירה
@@ -198,11 +198,11 @@ export default function FinanceDashboard() {
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Revenue Chart */}
-        <Card className="p-6 glass border-0">
+        <Card className="p-4 sm:p-6 glass border-0">
           <h2 className="text-lg font-bold text-foreground mb-4">
             הכנסות חודשיות (MRR)
           </h2>
-          <div className="h-72" dir="ltr">
+          <div className="h-64 sm:h-72 min-h-[250px]" dir="ltr">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -232,11 +232,11 @@ export default function FinanceDashboard() {
         </Card>
 
         {/* Subscriber Growth Chart */}
-        <Card className="p-6 glass border-0">
+        <Card className="p-4 sm:p-6 glass border-0">
           <h2 className="text-lg font-bold text-foreground mb-4">
             צמיחת מנויים
           </h2>
-          <div className="h-72" dir="ltr">
+          <div className="h-64 sm:h-72 min-h-[250px]" dir="ltr">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={subscriberData}>
                 <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
@@ -274,14 +274,15 @@ export default function FinanceDashboard() {
       </div>
 
       {/* Failed Payments */}
-      <Card className="p-6 glass border-0">
-        <div className="flex items-center justify-between mb-4">
+      <Card className="p-4 sm:p-6 glass border-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <h2 className="text-lg font-bold text-foreground">תשלומים שנכשלו</h2>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="w-full sm:w-auto">
             <RefreshCw className="h-4 w-4 ml-2" />
             נסה שוב הכל
           </Button>
         </div>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -312,13 +313,15 @@ export default function FinanceDashboard() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </Card>
 
       {/* Recent Transactions */}
-      <Card className="p-6 glass border-0">
+      <Card className="p-4 sm:p-6 glass border-0">
         <h2 className="text-lg font-bold text-foreground mb-4">
           עסקאות אחרונות
         </h2>
+        <div className="overflow-x-auto -mx-4 sm:mx-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -347,6 +350,7 @@ export default function FinanceDashboard() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </Card>
     </div>
   )

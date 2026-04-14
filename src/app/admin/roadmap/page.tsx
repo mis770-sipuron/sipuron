@@ -284,7 +284,7 @@ export default function RoadmapPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-foreground flex items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-extrabold text-foreground flex items-center gap-2">
             <Target className="h-6 w-6 text-amber-500" />
             רודמאפ פרויקטים
           </h1>
@@ -339,7 +339,7 @@ export default function RoadmapPage() {
                 {deptInfo.hebrewTitle} — מדדי מפתח
               </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center sm:text-right">
               {deptInfo.kpis.map((kpi) => (
                 <div
                   key={kpi.label}
