@@ -367,18 +367,20 @@ export function ProposalClient() {
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/10 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <p className="text-lg text-muted-foreground mb-4">מנחם, שב נוח. יש לנו הרבה מה לדבר.</p>
+          <p className="text-lg text-muted-foreground mb-4">מנחם, שב נוח. מכין לך קפה? ☕</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-            מ-₪2,110 ל-₪45,216
+            התחלנו מ-₪2,110 בחודש.
             <br />
             <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              ב-8 חודשים. צמיחה של x21.
+              היום? ₪45,216. צמיחה של x21.
             </span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            בנית קהילה של 17,000 משפחות. 200+ סיפורים. ₪227K הכנסה.
+            אתה בנית 200+ סיפורים שילדים מתאהבים בהם.
             <br className="hidden sm:block" />
-            עכשיו הזמן לבנות את התשתית שתיקח את סיפורון ל-₪100K ומעלה.
+            אני בניתי את המערכות שהביאו 17,000 משפחות.
+            <br className="hidden sm:block" />
+            <strong className="text-foreground">ביחד הגענו ל-₪227K הכנסה.</strong> עכשיו — הצעד הבא.
           </p>
 
           {/* Stats grid */}
@@ -518,8 +520,12 @@ export function ProposalClient() {
 
       {/* ═══════════════════ WITHOUT ME vs WITH ME ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">שני תרחישים</h2>
-        <p className="text-center text-muted-foreground mb-10">מנחם, תבחר איפה אתה רוצה להיות בעוד 6 חודשים</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">שני מסלולים</h2>
+        <p className="text-center text-muted-foreground mb-4">מנחם, תסתכל על שני התרחישים. איפה אתה רואה את סיפורון בעוד 6 חודשים?</p>
+        <p className="text-center text-xs text-muted-foreground mb-10 max-w-lg mx-auto">
+          זה לא איום — זה מציאות. ראינו שכשאין קמפיין פעיל, הבוט יורד ל-5 כניסות ביום.
+          ראינו ש-108 מנויים עזבו בלי שאף אחד ידע.
+        </p>
 
         <div className="grid sm:grid-cols-2 gap-6">
           {/* WITHOUT */}
@@ -605,14 +611,14 @@ export function ProposalClient() {
 
       {/* ═══════════════════ PROJECTS ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">18 פרויקטים — בחר מה חשוב לך</h2>
+        <h2 className="text-3xl font-extrabold text-center mb-3">18 פרויקטים — אתה בוחר מה ומתי</h2>
         <p className="text-center text-muted-foreground mb-4 max-w-2xl mx-auto">
-          מנחם, בחר את הפרויקטים שחשובים לך.
+          מנחם, אני לא מחליט בשבילך. כל פרויקט = הצעת מחיר נפרדת שאתה מאשר מראש.
           <br />
-          גרור כדי לשנות סדר עדיפויות. לחץ על פרויקט לפרטים מלאים.
+          <strong className="text-foreground">סמן מה חשוב לך</strong>, גרור לסדר העדיפויות שלך, ולחץ על השם לפרטים מלאים.
         </p>
         <p className="text-center text-xs text-muted-foreground mb-10">
-          ↕️ גרור להזזה &nbsp; | &nbsp; ✅ לחץ לבחירה &nbsp; | &nbsp; 📖 לחץ על השם לפרטים
+          ☝️ לחץ על ✅ לבחירה &nbsp; | &nbsp; ↕️ גרור להזזת סדר &nbsp; | &nbsp; 📖 לחץ על שם הפרויקט לפרטים
         </p>
 
         {/* Category legend */}
@@ -754,8 +760,12 @@ export function ProposalClient() {
       {/* ═══════════════════ RETAINER DETAIL ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold text-center mb-3">תחזוקה חודשית — {fmtCurrency(2000)}/חודש</h2>
-        <p className="text-center text-muted-foreground mb-10 max-w-2xl mx-auto">
-          מנחם, זה לא &quot;תמיכה טכנית&quot;. זה אדם שמחזיק את כל המערכות שלך רצות, כל יום, 24/7.
+        <p className="text-center text-muted-foreground mb-4 max-w-2xl mx-auto">
+          מנחם, אתה שואל את עצמך: &quot;למה אני משלם ₪2,000 כל חודש?&quot;
+        </p>
+        <p className="text-center text-sm text-foreground mb-10 max-w-2xl mx-auto">
+          כי יש לך 7 מערכות שמדברות אחת עם השנייה (Cardcom, Green API, Make.com, Supabase, WhatsApp, Bot, אתר).
+          כשמשהו נשבר — ומשהו תמיד נשבר — מישהו צריך לתקן. תוך שעות, לא ימים.
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -1034,8 +1044,31 @@ export function ProposalClient() {
       </section>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
+      {/* ═══════════════════ PERSONAL NOTE ═══════════════════ */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+        <div className="rounded-2xl bg-amber-50/50 dark:bg-slate-800/50 border border-amber-200/50 dark:border-amber-800/20 p-6 sm:p-8">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            מנחם,
+            <br /><br />
+            בשמונה חודשים ראיתי את סיפורון גדל ממשהו קטן לעסק של ₪45K בחודש.
+            ראיתי 17,000 משפחות שנכנסות, ראיתי ילדים שהולכים לישון עם חיוך.
+            <br /><br />
+            אני יודע שאתה לא אוהב לשלם על דברים שאתה לא מבין למה הם עולים כסף.
+            אני מכבד את זה. בגלל זה כל שקל פה מוסבר.
+            <br /><br />
+            הלמה שלך הוא &quot;להצית בלב של ילד את הניצוץ הפנימי שלו — דרך סיפור.&quot;
+            <br />
+            הלמה שלי הוא לבנות את המערכת שתאפשר לזה לקרות — בסקייל, בלי שתצטרך לעבוד 18 שעות ביום.
+            <br /><br />
+            שותפים לצמיחה. מהיום הראשון.
+            <br /><br />
+            <strong className="text-foreground">— יוסף</strong>
+          </p>
+        </div>
+      </section>
+
       <footer className="border-t py-6 text-center text-xs text-muted-foreground">
-        הצעה זו חסויה ומיועדת למנחם שרון בלבד. נבנתה עם אהבה על ידי יוסף. סיפורון © 2026
+        הצעה זו חסויה ומיועדת למנחם שרון בלבד. סיפורון © 2026
       </footer>
     </div>
   )
