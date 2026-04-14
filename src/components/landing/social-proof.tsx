@@ -1,5 +1,8 @@
+"use client"
+
 import { Card } from "@/components/ui/card"
 import { Star, Users, BookOpen, Calendar } from "lucide-react"
+import { motion } from "framer-motion"
 
 const TESTIMONIALS = [
   {
@@ -32,47 +35,93 @@ export function SocialProof() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Stats strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          {STATS.map((stat) => {
+          {STATS.map((stat, i) => {
             const Icon = stat.icon
             return (
-              <div key={stat.label} className="text-center">
-                <Icon className="h-6 w-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl sm:text-3xl font-extrabold text-foreground">
+              <motion.div
+                key={stat.label}
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: i * 0.1 }}
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, type: "spring", stiffness: 200, damping: 10, delay: i * 0.1 + 0.1 }}
+                >
+                  <Icon className="h-6 w-6 text-primary mx-auto mb-2" />
+                </motion.div>
+                <motion.div
+                  className="text-2xl sm:text-3xl font-extrabold text-foreground"
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, type: "spring", stiffness: 120, delay: i * 0.1 + 0.2 }}
+                >
                   {stat.value}
-                </div>
+                </motion.div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
+              </motion.div>
             )
           })}
         </div>
 
         {/* Testimonials */}
-        <div className="text-center mb-10">
+        <motion.div
+          className="text-center mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+        >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">
             מה ההורים אומרים
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TESTIMONIALS.map((t, i) => (
-            <Card
+            <motion.div
               key={i}
-              className="p-6 border-0 shadow-md hover:shadow-lg transition-shadow animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, type: "spring", stiffness: 100, delay: i * 0.12 }}
+              whileHover={{ scale: 1.02, y: -4 }}
             >
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, j) => (
-                  <Star key={j} className="h-4 w-4 fill-amber-400 text-amber-400" />
-                ))}
-              </div>
-              <p className="text-foreground leading-relaxed mb-4">
-                &ldquo;{t.quote}&rdquo;
-              </p>
-              <div className="text-sm">
-                <span className="font-bold text-foreground">{t.name}</span>
-                <span className="text-muted-foreground"> — {t.detail}</span>
-              </div>
-            </Card>
+              <Card
+                className="p-6 border-0 shadow-md hover:shadow-lg transition-shadow h-full"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, j) => (
+                    <motion.div
+                      key={j}
+                      initial={{ opacity: 0, scale: 0 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 0.3,
+                        type: "spring",
+                        stiffness: 200,
+                        delay: i * 0.12 + j * 0.06,
+                      }}
+                    >
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    </motion.div>
+                  ))}
+                </div>
+                <p className="text-foreground leading-relaxed mb-4">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="text-sm">
+                  <span className="font-bold text-foreground">{t.name}</span>
+                  <span className="text-muted-foreground"> — {t.detail}</span>
+                </div>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>
