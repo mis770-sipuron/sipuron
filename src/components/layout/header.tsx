@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, LogIn } from "lucide-react"
+import { Menu, LogIn, LogOut, Shield } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/layout/theme-toggle"
+import { useAuth } from "@/lib/hooks/use-auth"
 
 const NAV_LINKS = [
   { href: "/stories", label: "סיפורים" },
@@ -14,6 +15,12 @@ const NAV_LINKS = [
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { user, loading, signOut } = useAuth()
+
+  const isAdmin = user?.app_metadata?.role === "admin"
+  const displayName =
+    user?.user_metadata?.full_name || user?.email || user?.phone || ""
+  const avatarInitial = displayName.charAt(0).toUpperCase() || "?"
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-border/50">
@@ -40,17 +47,39 @@ export function Header() {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/login">
-                <LogIn className="h-4 w-4 ml-2" />
-                כניסה
-              </Link>
-            </Button>
-            <Button size="sm" asChild>
-              <Link href="/join">
-                להתחיל ב-₪5
-              </Link>
-            </Button>
+            {loading ? null : user ? (
+              <>
+                {isAdmin && (
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="/admin">
+                      <Shield className="h-4 w-4 ml-2" />
+                      ניהול
+                    </Link>
+                  </Button>
+                )}
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold">
+                  {avatarInitial}
+                </div>
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  <LogOut className="h-4 w-4 ml-2" />
+                  יציאה
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/login">
+                    <LogIn className="h-4 w-4 ml-2" />
+                    כניסה
+                  </Link>
+                </Button>
+                <Button size="sm" asChild>
+                  <Link href="/join">
+                    להתחיל ב-₪5
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile */}
@@ -76,17 +105,43 @@ export function Header() {
               </Link>
             ))}
             <div className="flex flex-col gap-2 pt-3 border-t">
-              <Button variant="outline" className="w-full h-11 text-base" asChild>
-                <Link href="/login" onClick={() => setMobileOpen(false)}>
-                  <LogIn className="h-4 w-4 ml-2" />
-                  כניסה
-                </Link>
-              </Button>
-              <Button className="w-full h-11 text-base" asChild>
-                <Link href="/join" onClick={() => setMobileOpen(false)}>
-                  להתחיל ב-₪5
-                </Link>
-              </Button>
+              {loading ? null : user ? (
+                <>
+                  {isAdmin && (
+                    <Button variant="outline" className="w-full h-11 text-base" asChild>
+                      <Link href="/admin" onClick={() => setMobileOpen(false)}>
+                        <Shield className="h-4 w-4 ml-2" />
+                        ניהול
+                      </Link>
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 text-base"
+                    onClick={() => {
+                      setMobileOpen(false)
+                      signOut()
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 ml-2" />
+                    יציאה
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-full h-11 text-base" asChild>
+                    <Link href="/login" onClick={() => setMobileOpen(false)}>
+                      <LogIn className="h-4 w-4 ml-2" />
+                      כניסה
+                    </Link>
+                  </Button>
+                  <Button className="w-full h-11 text-base" asChild>
+                    <Link href="/join" onClick={() => setMobileOpen(false)}>
+                      להתחיל ב-₪5
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}

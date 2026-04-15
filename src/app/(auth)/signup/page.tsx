@@ -13,6 +13,7 @@ import {
   Check,
   Sparkles,
   X,
+  Loader2,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -26,6 +27,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select"
+import { createClient } from "@/lib/supabase/client"
 
 /* ── Types ── */
 
@@ -72,6 +74,10 @@ export default function SignupPage() {
   /* Step 3 */
   const [plan, setPlan] = useState<Plan>("monthly")
 
+  /* Loading & error */
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   /* ── Handlers ── */
 
   function addChild() {
@@ -90,14 +96,45 @@ export default function SignupPage() {
     setChildren(updated)
   }
 
-  function handleSubmit() {
-    console.log("Signup data:", {
-      fullName,
-      phone,
-      email,
-      children,
-      plan,
-    })
+  async function handleSubmit() {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const supabase = createClient()
+
+      const formattedPhone = "+972" + phone.replace(/^0/, "").replace(/-/g, "")
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        ...(email ? { email } : {}),
+        phone: formattedPhone,
+        password: Math.random().toString(36).slice(-12),
+        options: {
+          data: {
+            full_name: fullName,
+          },
+        },
+      })
+
+      if (signUpError) throw signUpError
+
+      // Add children to Supabase
+      if (data.user) {
+        for (const child of children) {
+          await supabase.from("children").insert({
+            user_id: data.user.id,
+            name: child.name,
+            age_group: child.ageGroup,
+          })
+        }
+      }
+
+      // Redirect to checkout
+      window.location.href = `/checkout?plan=${plan}`
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "שגיאה בהרשמה, נסו שוב")
+      setLoading(false)
+    }
   }
 
   /* ── Validation per step ── */
@@ -125,6 +162,13 @@ export default function SignupPage() {
               הצטרפו למשפחת סיפורון
             </p>
           </div>
+
+          {/* Error display */}
+          {error && (
+            <div className="mb-4 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive text-center">
+              {error}
+            </div>
+          )}
 
           {/* Progress bar */}
           <ProgressSteps current={step} />
@@ -182,9 +226,16 @@ export default function SignupPage() {
               <Button
                 className="h-12 flex-1 rounded-xl text-base font-bold shimmer-effect"
                 onClick={handleSubmit}
+                disabled={loading}
               >
-                <Sparkles className="h-4 w-4" />
-                להתחיל ב-₪5
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    להתחיל ב-₪5
+                  </>
+                )}
               </Button>
             )}
           </div>
