@@ -35,6 +35,9 @@ export function Footer() {
               <Link href="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 מדיניות פרטיות
               </Link>
+              <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                צור קשר
+              </Link>
             </nav>
           </div>
 

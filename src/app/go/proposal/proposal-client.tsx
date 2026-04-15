@@ -185,9 +185,9 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "community-ads",
     name: "מוניטיזציה של הקהילה",
-    subtitle: "15,000 הורים שמקבלים סיפור שבועי — אפשר לעשות עם זה עוד דברים.",
+    subtitle: "15,690 הורים שמקבלים סיפור שבועי — אפשר לעשות עם זה עוד דברים.",
     description: "שיתופי פעולה עם עסקים: תוכן ממומן, פרסום מותאם, ברטר. הכנסה שלא תלויה במנויים.",
-    whyNow: "הקהילה החינמית = 15,000 הורים. כל הכנסה מפה = בונוס נקי.",
+    whyNow: "הקהילה החינמית = 15,690 הורים. כל הכנסה מפה = בונוס נקי.",
     originalPrice: 2500, weeks: 2, icon: Megaphone, category: "future",
     impact: "הכנסה מהקהילה החינמית", replaces: "קהילה בלי הכנסה",
   },
@@ -367,18 +367,18 @@ export function ProposalClient() {
         <div className="absolute top-20 left-10 w-72 h-72 bg-amber-300/20 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-10 w-96 h-96 bg-purple-300/10 rounded-full blur-3xl" />
         <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <p className="text-lg text-muted-foreground mb-4">אחי, בוא נעשה סדר בדברים.</p>
+          <p className="text-lg text-muted-foreground mb-4">מנחם, בוא נעשה סדר בדברים.</p>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-            ₪45,216 הכנסה בחודש. 944 מנויים. 17,000 משפחות.
+            מ-₪0 ל-₪45,216 בחודש. 8 חודשים.
             <br />
             <span className="bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              בגדול — צמיחה של x21 מהיום הראשון.
+              מה הצעד הבא?
             </span>
           </h1>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            אבל יש דברים שנופלים בין הכיסאות.
+            הכל פה — מספרים, תוכנית, הצעת מחיר.
             <br className="hidden sm:block" />
-            בוא נדבר על זה.
+            תעבור ונדבר.
           </p>
 
           {/* Stats grid */}
@@ -387,7 +387,7 @@ export function ProposalClient() {
               { value: "₪227,669", label: "הכנסה כוללת" },
               { value: "x21", label: "צמיחה ב-8 חודשים" },
               { value: "944", label: "מנויים פעילים" },
-              { value: "17,000", label: "משפחות בקהילה" },
+              { value: "15,690", label: "משפחות בקהילות" },
             ].map(s => (
               <div key={s.label} className="text-center">
                 <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-l from-amber-500 to-orange-500 bg-clip-text text-transparent">
@@ -401,10 +401,10 @@ export function ProposalClient() {
           {/* Extended stats row */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
             {[
-              { value: "~1,300", label: "חברי מועדון" },
-              { value: "18", label: "קבוצות WhatsApp" },
-              { value: "12,250", label: "כניסות לבוט" },
-              { value: "87-90%", label: "המרה 5₪→45₪" },
+              { value: "929", label: "חברי מועדון (קבוצה)" },
+              { value: "944", label: "משלמים 45₪ בפועל" },
+              { value: "5.3", label: "חודשים ממוצע למנוי" },
+              { value: "₪187", label: "ערך מנוי ממוצע" },
             ].map(s => (
               <div key={s.label} className="text-center rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm p-3">
                 <div className="text-xl sm:text-2xl font-bold text-foreground">{s.value}</div>
@@ -414,7 +414,7 @@ export function ProposalClient() {
           </div>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            10 מבצעי שיתופים | 88% מהכניסות לבוט = הפניות מהורים | נתונים ישירות מ-Cardcom, Green API והבוט
+            18 קהילות | 10 מבצעי שיתופים | 12,250 כניסות לבוט (88% הפניות) | המרה 87-90% מ-5₪ ל-45₪ | מנוי שעוזב נשאר 2.5 חודשים בממוצע
           </p>
         </div>
       </section>
@@ -432,7 +432,7 @@ export function ProposalClient() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>10 מבצעי שיתופים — 17,000 משפחות ב-18 קבוצות</span>
+                <span>10 מבצעי שיתופים — 15,690 משפחות ב-18 קהילות</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -487,7 +487,7 @@ export function ProposalClient() {
         <div className="rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 p-6 sm:p-8">
           <h3 className="text-xl font-extrabold text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
             <TrendingDown className="h-5 w-5" />
-            אחי, יש משהו שקורה מתחת לרדאר
+            יש משהו שקורה מתחת לרדאר
           </h3>
           <p className="text-sm text-red-600/80 dark:text-red-400/80 mb-6">
             המספרים האלה לא נראים בשום מקום — כי אין דשבורד. אני חייב להראות לך.
@@ -793,7 +793,7 @@ export function ProposalClient() {
           </h4>
           <p className="text-xs text-muted-foreground leading-relaxed">
             צריך ידע ב-API (Cardcom, Green API), מומחיות ב-Make.com, ניהול Supabase, ותחזוקת קוד.
-            אתה מביא את הנשמה — אני מביא את הכלים. כמו לכל מערכת, צריך מישהו שמכיר את כל החלקים ויודע לתקן כשמשהו נשבר. ומשהו תמיד נשבר.
+            אתה מביא את הנשמה — אני מביא את הכלים. צריך מישהו שמכיר את כל החלקים ויודע לתקן בזמן.
           </p>
         </div>
 
@@ -841,8 +841,8 @@ export function ProposalClient() {
 
       {/* ═══════════════════ PAYMENT MODEL ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">בשורה התחתונה: איך זה עובד</h2>
-        <p className="text-center text-muted-foreground mb-10">יש עבודה — יש תשלום. אין עבודה — אין תשלום. פשוט.</p>
+        <h2 className="text-3xl font-extrabold text-center mb-3">איך עובד התשלום</h2>
+        <p className="text-center text-muted-foreground mb-10">יש עבודה — יש תשלום. אין עבודה — אין תשלום.</p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="rounded-2xl border bg-card p-6 shadow-sm">
@@ -852,7 +852,7 @@ export function ProposalClient() {
               הצעת מחיר לכל פרויקט — <strong>כולל 30% הנחה</strong>.
               <br /><br />
               אתה מאשר מראש. 50% בהתחלה, 50% במסירה.
-              לא מאשר? לא משלם. פשוט.
+              לא מאשר? לא משלם.
             </p>
           </div>
 
@@ -896,27 +896,10 @@ export function ProposalClient() {
         </div>
       </section>
 
-      {/* ═══════════════════ MILESTONES ═══════════════════ */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-center mb-3">בונוסי צמיחה — מגיעים ליעדים ביחד</h2>
-        <p className="text-center text-muted-foreground mb-10">אבני דרך ברורות. מגיעים = בונוס. פשוט.</p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {MILESTONES.map(m => (
-            <div key={m.target} className="rounded-2xl border bg-card p-5 shadow-sm text-center hover:shadow-md transition-shadow">
-              <div className="text-4xl mb-3">{m.icon}</div>
-              <div className="font-bold text-sm mb-1">{m.target}</div>
-              <div className="text-2xl font-extrabold text-primary">{fmtCurrency(m.bonus)}</div>
-              <div className="text-[10px] text-muted-foreground mt-1">בונוס חד-פעמי</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ═══════════════════ ROADMAP ═══════════════════ */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <h2 className="text-3xl font-extrabold text-center mb-3">מפת דרכים — מה קודם, מה אחר כך</h2>
-        <p className="text-center text-muted-foreground mb-10">מאפריל 2026 עד 2027 — כל שלב ברור. בעזרת ה׳.</p>
+        <p className="text-center text-muted-foreground mb-10">מאפריל 2026 עד 2027 — כל שלב ברור.</p>
 
         <div className="space-y-8">
           {ROADMAP.map(q => (
@@ -1008,7 +991,7 @@ export function ProposalClient() {
 
       {/* ═══════════════════ CTA ═══════════════════ */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-lg text-muted-foreground mb-2">אחי,</p>
+        <p className="text-lg text-muted-foreground mb-2">מנחם,</p>
         <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
           תעבור על הכל, תסמן.
           <br />
@@ -1048,18 +1031,16 @@ export function ProposalClient() {
             אחי,
             <br /><br />
             אני לא כותב את זה כדי למכור לך.
-            אנחנו עובדים ביחד כבר 8 חודשים. ראיתי את סיפורון גדל מ-₪2,110 ל-₪45K בחודש. ראיתי 17,000 משפחות שנכנסות. ברוך השם.
+            אנחנו עובדים ביחד כבר 8 חודשים. ראיתי את סיפורון גדל מ-₪0 ל-₪45K בחודש. 15,690 משפחות בקהילות. ברוך השם.
             <br /><br />
             אני יודע שאתה לא אוהב לשלם על דברים שאתה לא מבין למה הם עולים כסף.
             אני מכבד את זה. בגלל זה כל שקל פה מוסבר.
             <br /><br />
             הלמה שלך: &quot;להצית בלב של ילד את הניצוץ הפנימי שלו — דרך סיפור.&quot;
             <br />
-            הלמה שלי: לבנות את הכלים שיאפשרו לזה לקרות — בסקייל, בלי שתצטרך לעבוד 18 שעות ביום.
+            הלמה שלי: לבנות את הכלים שיאפשרו לזה להגיע לכמה שיותר ילדים — בלי שתצטרך לעבוד 18 שעות ביום.
             <br /><br />
-            תכלס, בשורה התחתונה — אם יש עבודה יש תשלום. אין עבודה אין תשלום. הוגן?
-            <br /><br />
-            מה דעתך?
+            תכלס — אם יש עבודה יש תשלום. אין עבודה אין תשלום. הוגן?
             <br /><br />
             <strong className="text-foreground">— יוסף</strong>
           </p>

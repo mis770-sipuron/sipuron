@@ -29,12 +29,34 @@ export const metadata: Metadata = {
     "פרשת שבוע",
   ],
   authors: [{ name: "מנחם שרון" }],
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon-192.png",
+  },
+  manifest: "/manifest.json",
   openGraph: {
     title: "סיפורון — סיפורי שמע לילדים",
     description: "כל לילה סיפור חדש. כל סיפור — עולם שלם.",
     locale: "he_IL",
     type: "website",
+    siteName: "סיפורון",
+    url: "https://sipuron.org",
+    images: [
+      {
+        url: "https://sipuron.org/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "סיפורון — סיפורי שמע לילדים",
+      },
+    ],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "סיפורון — סיפורי שמע לילדים",
+    description: "כל לילה סיפור חדש. כל סיפור — עולם שלם.",
+    images: ["https://sipuron.org/og-image.png"],
+  },
+  metadataBase: new URL("https://sipuron.org"),
 }
 
 export default function RootLayout({
