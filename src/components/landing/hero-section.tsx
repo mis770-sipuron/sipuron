@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Play, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
@@ -31,6 +32,26 @@ export function HeroSection() {
       />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36">
+        {/* Children illustration — desktop only */}
+        <motion.div
+          className="hidden lg:block absolute left-4 xl:left-10 top-1/2 -translate-y-1/2 pointer-events-none"
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, type: "spring", stiffness: 80, delay: 0.3 }}
+          animate={{ y: [-8, 8, -8] }}
+          style={{ animationDuration: "6s" }}
+        >
+          <Image
+            src="/children.png"
+            alt="ילדי סיפורון"
+            width={400}
+            height={400}
+            className="w-[280px] xl:w-[360px] h-auto drop-shadow-2xl"
+            priority
+          />
+        </motion.div>
+
         <div className="text-center max-w-3xl mx-auto">
           {/* Badge */}
           <motion.div

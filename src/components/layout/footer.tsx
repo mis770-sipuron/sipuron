@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BookOpen, Phone, Mail } from "lucide-react"
+import { Phone, Mail } from "lucide-react"
 
 export function Footer() {
   return (
@@ -9,8 +9,7 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <BookOpen className="h-6 w-6 text-primary" />
-              <span className="text-xl font-extrabold text-primary">סיפורון</span>
+              <img src="/logo.png" alt="סיפורון" className="h-10 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               סיפורי שמע איכותיים לילדים בקול של מנחם שרון.

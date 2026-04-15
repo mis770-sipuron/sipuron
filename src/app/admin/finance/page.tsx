@@ -1,8 +1,14 @@
 "use client"
 
+import { useState, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import {
+  Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
+} from "@/components/ui/select"
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from "@/components/ui/table"
@@ -13,9 +19,14 @@ import {
 } from "recharts"
 import {
   TrendingUp, TrendingDown, DollarSign, Users,
-  RefreshCw, RotateCcw, CreditCard, Percent,
+  RefreshCw, RotateCcw, CreditCard, Percent, Loader2, Wifi, WifiOff,
 } from "lucide-react"
 import Link from "next/link"
+import {
+  useCardcomTransactions,
+  useCardcomFailures,
+  useSyncCardcom,
+} from "@/lib/hooks/use-cardcom-data"
 
 /* ───────── KPI data ───────── */
 const KPIs = [
@@ -136,8 +147,97 @@ function CurrencyTooltip({ active, payload, label }: any) {
   )
 }
 
+/* ───────── Month options ───────── */
+const MONTH_OPTIONS = [
+  { value: "012026", label: "ינואר 2026" },
+  { value: "022026", label: "פברואר 2026" },
+  { value: "032026", label: "מרץ 2026" },
+  { value: "042026", label: "אפריל 2026" },
+  { value: "052026", label: "מאי 2026" },
+  { value: "062026", label: "יוני 2026" },
+  { value: "072026", label: "יולי 2026" },
+  { value: "082026", label: "אוגוסט 2026" },
+  { value: "092026", label: "ספטמבר 2026" },
+  { value: "102026", label: "אוקטובר 2026" },
+  { value: "112026", label: "נובמבר 2026" },
+  { value: "122026", label: "דצמבר 2026" },
+  { value: "082025", label: "אוגוסט 2025" },
+  { value: "092025", label: "ספטמבר 2025" },
+  { value: "102025", label: "אוקטובר 2025" },
+  { value: "112025", label: "נובמבר 2025" },
+  { value: "122025", label: "דצמבר 2025" },
+]
+
 /* ───────── Page ───────── */
 export default function FinanceDashboard() {
+  /* ── Live/Mock state ── */
+  const [useLiveData, setUseLiveData] = useState(false)
+  const now = new Date()
+  const defaultMonth = `${String(now.getMonth() + 1).padStart(2, "0")}${now.getFullYear()}`
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth)
+
+  // Calculate DDMMYYYY date range from selectedMonth (MMYYYY)
+  const { fromDate, toDate } = useMemo(() => {
+    const mm = selectedMonth.slice(0, 2)
+    const yyyy = selectedMonth.slice(2)
+    const lastDay = new Date(Number(yyyy), Number(mm), 0).getDate()
+    return {
+      fromDate: `01${mm}${yyyy}`,
+      toDate: `${String(lastDay).padStart(2, "0")}${mm}${yyyy}`,
+    }
+  }, [selectedMonth])
+
+  // Conditionally fetch (pass empty strings when in mock mode to skip)
+  const {
+    data: liveTransactions,
+    loading: txLoading,
+    error: txError,
+    refetch: refetchTx,
+  } = useCardcomTransactions(useLiveData ? fromDate : "", useLiveData ? toDate : "")
+
+  const {
+    data: liveFailures,
+    loading: failLoading,
+    error: failError,
+    refetch: refetchFail,
+  } = useCardcomFailures(useLiveData ? fromDate : "", useLiveData ? toDate : "")
+
+  const { sync, syncing, result: syncResult, error: syncError } = useSyncCardcom()
+
+  // Determine connection status
+  const isConnected = useLiveData && !txError && !failError
+  const hasError = useLiveData && (!!txError || !!failError)
+  const isLoading = txLoading || failLoading
+
+  // Build transaction table from live data or fallback to mock
+  const displayTransactions = useMemo(() => {
+    if (!useLiveData || liveTransactions.length === 0) return recentTransactions
+    return liveTransactions.map((tx) => ({
+      name: tx.CardOwnerName || "---",
+      amount: tx.Amount,
+      status: tx.StatusCode === 0 ? "הצליח" : "נכשל",
+      date: tx.TransactionDate?.slice(0, 10) || "",
+    }))
+  }, [useLiveData, liveTransactions])
+
+  // Build failed payments from live data or fallback to mock
+  const displayFailures = useMemo(() => {
+    if (!useLiveData || liveFailures.length === 0) return failedPayments
+    return liveFailures.map((f) => ({
+      name: f.CardOwnerName || "---",
+      phone: "---",
+      amount: f.Amount,
+      date: f.TransactionDate?.slice(0, 10) || "",
+      retries: 0,
+      status: f.FailureReason || f.StatusDescription || "נכשל",
+    }))
+  }, [useLiveData, liveFailures])
+
+  function handleRefreshAll() {
+    refetchTx()
+    refetchFail()
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -155,6 +255,115 @@ export default function FinanceDashboard() {
           </Link>
         </Button>
       </div>
+
+      {/* ── Data Source Controls ── */}
+      <Card className="p-4 glass border-0">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-wrap">
+          {/* Live/Mock toggle */}
+          <div className="flex items-center gap-3">
+            <Label htmlFor="live-toggle" className="text-sm font-medium cursor-pointer">
+              נתונים חיים
+            </Label>
+            <Switch
+              id="live-toggle"
+              checked={useLiveData}
+              onCheckedChange={setUseLiveData}
+            />
+          </div>
+
+          {/* Month selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">חודש:</span>
+            <Select value={selectedMonth} onValueChange={(v) => setSelectedMonth(v as string)}>
+              <SelectTrigger size="sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {MONTH_OPTIONS.map((m) => (
+                  <SelectItem key={m.value} value={m.value}>
+                    {m.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Connection status */}
+          <div className="flex items-center gap-2">
+            {useLiveData ? (
+              isConnected ? (
+                <Badge variant="default" className="bg-emerald-600 text-white gap-1.5">
+                  <Wifi className="h-3 w-3" />
+                  Cardcom מחובר
+                </Badge>
+              ) : hasError ? (
+                <Badge variant="destructive" className="gap-1.5">
+                  <WifiOff className="h-3 w-3" />
+                  שגיאת חיבור
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="gap-1.5">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  מתחבר...
+                </Badge>
+              )
+            ) : (
+              <Badge variant="secondary" className="gap-1.5">
+                נתוני דמו
+              </Badge>
+            )}
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 sm:mr-auto sm:ml-0">
+            {useLiveData && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefreshAll}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 ml-2" />
+                )}
+                רענן נתונים
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={sync}
+              disabled={syncing}
+            >
+              {syncing ? (
+                <Loader2 className="h-4 w-4 ml-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 ml-2" />
+              )}
+              Sync Now
+            </Button>
+          </div>
+        </div>
+
+        {/* Error / sync result messages */}
+        {(txError || failError) && useLiveData && (
+          <p className="text-destructive text-sm mt-3">
+            שגיאה: {txError || failError} — מציג נתוני דמו כגיבוי
+          </p>
+        )}
+        {syncResult && (
+          <p className="text-emerald-600 text-sm mt-3">
+            סנכרון הושלם — {syncResult.count ?? 0} עסקאות
+          </p>
+        )}
+        {syncError && (
+          <p className="text-destructive text-sm mt-3">
+            שגיאת סנכרון: {syncError}
+          </p>
+        )}
+      </Card>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -276,7 +485,10 @@ export default function FinanceDashboard() {
       {/* Failed Payments */}
       <Card className="p-4 sm:p-6 glass border-0">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <h2 className="text-lg font-bold text-foreground">תשלומים שנכשלו</h2>
+          <h2 className="text-lg font-bold text-foreground">
+            תשלומים שנכשלו
+            {failLoading && <Loader2 className="inline h-4 w-4 mr-2 animate-spin" />}
+          </h2>
           <Button variant="outline" size="sm" className="w-full sm:w-auto">
             <RefreshCw className="h-4 w-4 ml-2" />
             נסה שוב הכל
@@ -295,12 +507,12 @@ export default function FinanceDashboard() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {failedPayments.map((row, i) => (
+            {displayFailures.map((row, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{row.name}</TableCell>
                 <TableCell dir="ltr" className="text-right">{row.phone}</TableCell>
                 <TableCell>{fmtCurrency(row.amount)}</TableCell>
-                <TableCell>{new Date(row.date).toLocaleDateString("he-IL")}</TableCell>
+                <TableCell>{row.date ? new Date(row.date).toLocaleDateString("he-IL") : "---"}</TableCell>
                 <TableCell>{row.retries}</TableCell>
                 <TableCell>
                   <Badge
@@ -311,6 +523,13 @@ export default function FinanceDashboard() {
                 </TableCell>
               </TableRow>
             ))}
+            {displayFailures.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  {failLoading ? "טוען נתונים..." : "אין תשלומים שנכשלו"}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
         </div>
@@ -320,6 +539,7 @@ export default function FinanceDashboard() {
       <Card className="p-4 sm:p-6 glass border-0">
         <h2 className="text-lg font-bold text-foreground mb-4">
           עסקאות אחרונות
+          {txLoading && <Loader2 className="inline h-4 w-4 mr-2 animate-spin" />}
         </h2>
         <div className="overflow-x-auto -mx-4 sm:mx-0">
         <Table>
@@ -332,7 +552,7 @@ export default function FinanceDashboard() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentTransactions.map((tx, i) => (
+            {displayTransactions.map((tx, i) => (
               <TableRow key={i}>
                 <TableCell className="font-medium">{tx.name}</TableCell>
                 <TableCell>{fmtCurrency(tx.amount)}</TableCell>
@@ -344,10 +564,17 @@ export default function FinanceDashboard() {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {new Date(tx.date).toLocaleDateString("he-IL")}
+                  {tx.date ? new Date(tx.date).toLocaleDateString("he-IL") : "---"}
                 </TableCell>
               </TableRow>
             ))}
+            {displayTransactions.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                  {txLoading ? "טוען נתונים..." : "אין עסקאות לתצוגה"}
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
         </div>

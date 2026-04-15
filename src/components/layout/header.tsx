@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Menu, BookOpen, LogIn } from "lucide-react"
+import { Menu, LogIn } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/layout/theme-toggle"
 
@@ -21,10 +21,7 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <BookOpen className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-            <span className="text-2xl font-extrabold bg-gradient-to-l from-amber-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
-              סיפורון
-            </span>
+            <img src="/logo.png" alt="סיפורון" className="h-10 w-auto transition-transform group-hover:scale-105" />
           </Link>
 
           {/* Desktop Nav */}
