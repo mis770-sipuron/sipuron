@@ -36,17 +36,17 @@ const ALL_PROJECTS: Project[] = [
     id: "site",
     name: "אתר + מערכת מנויים",
     subtitle: "פלטפורמה אחת במקום 5 כלים. פשוט.",
-    description: "אתר סיפורון מלא: ארכיון 200+ סיפורים עם player, אזור אישי למנויים (סטטוס, תשלומים, ביטול עצמי), דף הרשמה עם referral מובנה. Supabase = מקום אחד לכל המידע. סנכרון דו-כיווני עם Cardcom + Green API.",
+    description: "אתר סיפורון מלא: ארכיון 200+ סיפורים עם נגן, אזור אישי למנויים (סטטוס, תשלומים, ביטול עצמי), דף הרשמה עם הפניות מובנה. Supabase = מקום אחד לכל המידע. סנכרון דו-כיווני עם Cardcom + Green API.",
     whyNow: "Skolar + Google Sheets + Fillout = 3 מערכות שלא מדברות אחת עם השנייה. כל שינוי = עבודה ידנית ב-3 מקומות. חד משמעית לא יחזיק.",
     originalPrice: 12000, weeks: 6, icon: Globe, category: "core",
     impact: "תשתית לכל השאר", replaces: "Skolar + Fillout + Google Sheets",
   },
   {
     id: "automation",
-    name: "אוטומציית ביטול + Dunning",
+    name: "אוטומציית ביטול + טיפול בתשלומים כושלים",
     subtitle: "108 מנויים עזבו בשקט. בלי שידענו. בלי שנלחמנו על אף אחד.",
-    description: "מערכת אוטומטית שמטפלת בכל ביטול: קריאת Gmail של מנחם → ביטול ב-Cardcom + WhatsApp קבוצה + תפוצה → הודעת פרידה עם סקר סיבה → שמירה ב-Supabase → הפצה למחלקות. כולל dunning: כשכרטיס אשראי לא עובר → הודעה למנוי → תזכורת אחרי 3 ימים → סימון אחרי 7.",
-    whyNow: "כל חודש 40-70 אנשים מפסיקים לשלם בשקט. אין סקר יציאה, אין dunning, אין ניסיון להחזיר. כסף שזורם החוצה.",
+    description: "מערכת אוטומטית שמטפלת בכל ביטול: קריאת Gmail של מנחם → ביטול ב-Cardcom + WhatsApp קבוצה + תפוצה → הודעת פרידה עם סקר סיבה → שמירה ב-Supabase → הפצה למחלקות. כולל טיפול באשראי כושל: כשכרטיס אשראי לא עובר → הודעה למנוי → תזכורת אחרי 3 ימים → סימון אחרי 7.",
+    whyNow: "כל חודש 40-70 אנשים מפסיקים לשלם בשקט. אין סקר יציאה, אין טיפול באשראי כושל, אין ניסיון להחזיר. כסף שזורם החוצה.",
     originalPrice: 4000, weeks: 2, icon: Zap, category: "core",
     impact: "עוצרים ~60 ביטולים שקטים בחודש", replaces: "עבודה ידנית × 3 מערכות",
   },
@@ -54,7 +54,7 @@ const ALL_PROJECTS: Project[] = [
     id: "dashboard",
     name: "דשבורד + קבוצת WhatsApp יומית",
     subtitle: "עסק של ₪45K בלי לדעת מה קורה בו. תכלס, זה חייב להשתנות.",
-    description: "דשבורד אוטומטי עם כל הנתונים מיום 1: הכנסות מ-Cardcom, כניסות מהבוט, גדלי קבוצות מ-Green API. התראות על כשלי אשראי, נטישה, ו-Flywheel שנעצר. כל בוקר ב-08:00 — סיכום יומי נשלח לקבוצת WhatsApp ייעודית דרך Green API.",
+    description: "דשבורד אוטומטי עם כל הנתונים מיום 1: הכנסות מ-Cardcom, כניסות מהבוט, גדלי קבוצות מ-Green API. התראות על כשלי אשראי, נטישה, ו-מנוע השיתופים שנעצר. כל בוקר ב-08:00 — סיכום יומי נשלח לקבוצת WhatsApp ייעודית דרך Green API.",
     whyNow: "בשביל לקבל את הנתונים שהצגתי לך — הייתי צריך לשלוף ידנית מ-3 APIs שונים. עם דשבורד, זה יגיע לבד כל בוקר.",
     originalPrice: 3500, weeks: 2, icon: BarChart3, category: "core",
     impact: "0 החלטות מתחושת בטן", replaces: "בדיקה ידנית בכל מערכת",
@@ -64,11 +64,11 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "campaign-flight",
     name: "קמפיין כרטיס טיסה לאירופה",
-    subtitle: "ה-Flywheel עומד כבר 6 שבועות. בוא נתניע.",
+    subtitle: "ה-מנוע השיתופים עומד כבר 6 שבועות. בוא נתניע.",
     description: "תכנון מלא של קמפיין שיתופים: פתיחת קבוצה 19, הגדרת בוט עם לינק אישי, גיוס שותפים עסקיים לפרסים, ניהול הקמפיין, ודוח תוצאות מפורט.",
-    whyNow: "באפריל נכנסו רק 5 אנשים לבוט. בקמפיין תשעה באב נכנסו 2,752. ההבדל = קמפיין. חד משמעית.",
+    whyNow: "באפריל נכנסו רק 5 אנשים לבוט. בקמפיין תשעה באב נכנסו 2,752. ההבדל = קמפיין.",
     originalPrice: 2000, weeks: 1, icon: Megaphone, category: "growth",
-    impact: "500-2,000 משפחות חדשות", replaces: "Flywheel עומד",
+    impact: "500-2,000 משפחות חדשות", replaces: "מנוע השיתופים עומד",
   },
   {
     id: "bot",
@@ -77,14 +77,14 @@ const ALL_PROJECTS: Project[] = [
     description: "מערכת בוט מלאה: חיבור לפייסבוק, לינק אישי לכל חבר, מדידה מלאה (מי הפנה, כמה נרשמו), הודעות בתשלום כשצריך. כשנפתחת קבוצה חדשה — כל הלינקים בכל ההודעות מתעדכנים אוטומטית.",
     whyNow: "Chatrace לא נותנת מדידה מספיקה ואין עדכון לינקים אוטומטי. כל קבוצה חדשה = עדכון ידני בעשרות מקומות.",
     originalPrice: 5000, weeks: 3, icon: Bot, category: "growth",
-    impact: "Flywheel אוטומטי", replaces: "Chatrace + עדכון ידני",
+    impact: "הלינקים מתעדכנים לבד", replaces: "Chatrace + עדכון ידני",
   },
   {
     id: "evergreen",
-    name: "Evergreen Referral — בוט שלא נסגר",
+    name: "בוט שיתופים קבוע — בוט שלא נסגר",
     subtitle: "היום הבוט סגור בין קמפיינים. 5 כניסות ביום. לדעתי זה בזבוז.",
-    description: "בוט referral שפתוח 24/7, כל חודש עם פרס אחר. כל חבר בקהילה יכול תמיד לשתף ולהרוויח. כשנפתחת קבוצה חדשה — הלינקים מתעדכנים אוטומטית בכל מקום.",
-    whyNow: "בין קמפיינים — 5 כניסות ביום. עם Evergreen — 150-300. ההבדל = ₪0 השקעה, רק שהבוט פתוח.",
+    description: "בוט הפניות שפתוח 24/7, כל חודש עם פרס אחר. כל חבר בקהילה יכול תמיד לשתף ולהרוויח. כשנפתחת קבוצה חדשה — הלינקים מתעדכנים אוטומטית בכל מקום.",
+    whyNow: "בין קמפיינים — 5 כניסות ביום. עם בוט קבוע — 150-300. ההבדל = ₪0 השקעה, רק שהבוט פתוח.",
     originalPrice: 2500, weeks: 1, icon: Repeat, category: "growth",
     impact: "150-300 כניסות/חודש במקום 5", replaces: "בוט שנסגר בין קמפיינים",
   },
@@ -99,7 +99,7 @@ const ALL_PROJECTS: Project[] = [
   },
   {
     id: "winback",
-    name: "Win-back — להחזיר את מי שעזב",
+    name: "החזרת מנויים — להחזיר את מי שעזב",
     subtitle: "417 אנשים ששילמו לנו ונעלמו. יש לנו את הטלפון שלהם.",
     description: "108 מנויים שעזבו אחרי ששילמו 45₪ + 309 שלא המירו מ-5₪. לכל אחד יש שם, טלפון, ומייל מ-Cardcom. נשלח הודעת WhatsApp אישית ממוקדת: מי שעזב בגלל מחיר → הצעה מיוחדת. מי שלא המיר → תזכורת עם סיפור טעימה.",
     whyNow: "המשפחות האלה כבר הכירו את סיפורון. כל יום שעובר = פחות סיכוי להחזיר אותם.",
@@ -115,16 +115,16 @@ const ALL_PROJECTS: Project[] = [
     description: "מנוי חדש מקבל סדרת הודעות מפוזרות: מיידי → הסיפור הראשון (אחרי שעה) → טיפ ליום 2 → שאלה ביום 7. תגובות חוזרות למערכת. חוויית כניסה שמרגישה אישית.",
     whyNow: "37% מהעוזבים עוזבים אחרי חודש 1. חוויית כניסה טובה = הסיכוי הכי גדול לשמור אותם.",
     originalPrice: 2000, weeks: 1, icon: Send, category: "content",
-    impact: "שימור גבוה יותר בחודש 1", replaces: "בלוק טקסט מסורבל",
+    impact: "פחות עוזבים בחודש הראשון", replaces: "בלוק טקסט מסורבל",
   },
   {
     id: "birthday",
     name: "ברכות יום הולדת אישיות",
     subtitle: "תאריכי לידה עבריים כבר קיימים מ-Fillout. רק צריך לחבר את זה.",
     description: "כל ילד של מנוי מקבל ברכת יום הולדת אישית: הקלטה מיוחדת ממנחם + הפתעה. אפקט וואו שגורם להורים לשתף. אפשרות לפיצ׳ר בתשלום.",
-    whyNow: "הנתונים קיימים — רק צריך לבנות את האוטומציה. השקעה קטנה, אימפקט גדול.",
+    whyNow: "הנתונים קיימים — רק צריך לבנות את האוטומציה. השקעה קטנה, תוצאה גדול.",
     originalPrice: 2500, weeks: 1, icon: Gift, category: "content",
-    impact: "וואו + שיתופים אורגניים", replaces: "אין — פיצ׳ר חדש",
+    impact: "הורים ישתפו מעצמם", replaces: "אין — דבר חדש",
   },
   {
     id: "renewal-gift",
@@ -133,7 +133,7 @@ const ALL_PROJECTS: Project[] = [
     description: "Cardcom API: מי מתחדש בעוד יומיים? אם לא שישי/שבת → שליחת סיפור בונוס או הפתעה. המנוי מרגיש שחושבים עליו בדיוק ברגע שהוא שוקל לבטל.",
     whyNow: "הרבה ביטולים קורים סביב תאריך החידוש. פינוק קטן = ההבדל בין להישאר לעזוב.",
     originalPrice: 1500, weeks: 1, icon: Heart, category: "content",
-    impact: "ירידה בנטישה סביב חידוש", replaces: "חידוש בלי שום תקשורת",
+    impact: "פחות ביטולים סביב חידוש", replaces: "חידוש בלי שום תקשורת",
   },
   {
     id: "daily-scheduler",
@@ -149,7 +149,7 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "shows",
     name: "לשונית הצגות באתר",
-    subtitle: "ערוץ הכנסה חדש — צפייה + מכירה למוסדות.",
+    subtitle: "הצגות באתר — צפייה + מכירה לגנים ומוסדות.",
     description: "קטלוג הצגות באתר: צפייה אונליין, הזמנה להצגה חיה. מכירה לגנים ומוסדות (~267₪ להצגה). חיבור ל-Cardcom לתשלום.",
     whyNow: "מנחם כבר מופיע בהצגות. המכירה ידנית. אתר = להגיע לעוד מוסדות.",
     originalPrice: 3500, weeks: 2, icon: Film, category: "future",
@@ -159,7 +159,7 @@ const ALL_PROJECTS: Project[] = [
     id: "languages",
     name: "סיפורים באנגלית + צרפתית",
     subtitle: "2 שווקים חדשים לגמרי. אותו מודל, שפה אחרת.",
-    description: "פתיחת 2 קבוצות היכרות בשפות חדשות. תרגום/הקלטה של סיפורים נבחרים. דף נחיתה בשפה. אותו Flywheel — שוק חדש.",
+    description: "פתיחת 2 קבוצות היכרות בשפות חדשות. תרגום/הקלטה של סיפורים נבחרים. דף נחיתה בשפה. אותו מנוע השיתופים — שוק חדש.",
     whyNow: "מנחם הציע את זה ב-13.4. יש ביקוש מהקהילות בחו\"ל.",
     originalPrice: 4000, weeks: 3, icon: Languages, category: "future",
     impact: "שוק חדש", replaces: "עברית בלבד",
@@ -167,27 +167,27 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "ai-voice",
     name: "AI בקול מנחם (11Labs)",
-    subtitle: "תוכן בסקייל — בלי שמנחם ישב מול מיקרופון כל היום.",
-    description: "Voice clone של מנחם ב-11Labs. סרטוני הלכות שבת, בין אדם לחברו, תוכן חינוכי. מנחם מאשר, AI מייצר.",
-    whyNow: "צוואר בקבוק = זמן הקלטה של מנחם. AI פותר את זה.",
+    subtitle: "סיפורים ותכנים בלי שמנחם ישב מול מיקרופון כל היום.",
+    description: "שכפול קול של מנחם ב-11Labs. סרטוני הלכות שבת, בין אדם לחברו, תוכן חינוכי. מנחם מאשר את התוכן, המערכת מייצרת.",
+    whyNow: "מנחם לא יכול להקליט 24 שעות ביום. עם שכפול קול — הסיפורים ממשיכים גם כשהוא לא מול המיקרופון.",
     originalPrice: 3000, weeks: 2, icon: Mic, category: "future",
-    impact: "תוכן אינסופי בקול מנחם", replaces: "רק הקלטות ידניות",
+    impact: "סיפורים בלי הגבלה", replaces: "רק הקלטות ידניות",
   },
   {
     id: "annual-plan",
-    name: "חבילה שנתית + Premium",
+    name: "חבילה שנתית + מסלול מיוחד",
     subtitle: "מנויים שנשארים יותר. הכנסה צפויה יותר. יציבות.",
-    description: "מנוי שנתי בהנחה (₪478 במקום ₪540). שכבת Premium: ברכות אישיות, גישה מוקדמת לסיפורים חדשים, סיפור מותאם אישית.",
+    description: "מנוי שנתי בהנחה (₪478 במקום ₪540). מסלול מיוחד למנויים וותיקים: ברכות אישיות, גישה מוקדמת לסיפורים חדשים, סיפור מותאם אישית.",
     whyNow: "יש 944 מנויים פעילים. אם 20% עוברים לשנתי = ₪90K מובטחים. יציבות בעזרת ה׳.",
     originalPrice: 2000, weeks: 1, icon: CreditCard, category: "future",
-    impact: "שימור גבוה + הכנסה צפויה", replaces: "רק מנוי חודשי",
+    impact: "מנויים שנשארים + הכנסה יציבה", replaces: "רק מנוי חודשי",
   },
   {
     id: "community-ads",
     name: "מוניטיזציה של הקהילה",
-    subtitle: "15,000 הורים שמקבלים סיפור שבועי — יש פה ערך עסקי.",
-    description: "מערכת שיתופי פעולה עם עסקים: תוכן ממומן, פרסומות מותאמות, ברטר. ערוץ הכנסה שלא תלוי במנויים.",
-    whyNow: "הקהילה החינמית = 15K הורים בלי מוניטיזציה. כל הכנסה מפה = בונוס נקי.",
+    subtitle: "15,000 הורים שמקבלים סיפור שבועי — אפשר לעשות עם זה עוד דברים.",
+    description: "שיתופי פעולה עם עסקים: תוכן ממומן, פרסום מותאם, ברטר. הכנסה שלא תלויה במנויים.",
+    whyNow: "הקהילה החינמית = 15,000 הורים. כל הכנסה מפה = בונוס נקי.",
     originalPrice: 2500, weeks: 2, icon: Megaphone, category: "future",
     impact: "הכנסה מהקהילה החינמית", replaces: "קהילה בלי הכנסה",
   },
@@ -196,9 +196,9 @@ const ALL_PROJECTS: Project[] = [
   {
     id: "nigunquest",
     name: "NigunQuest — אפליקציית בר מצווה",
-    subtitle: "אפליקציה gamified ללימוד קריאת התורה. כבר יש spec מלא + Lovable prototype.",
-    description: "אפליקציית PWA בסגנון Duolingo ללימוד טעמי המקרא ופרשת בר מצווה. מפת מסע (quest map), שיעורי אודיו, הקלטה ותרגול קולי, פאנל ניהול למורים. React + Supabase + PWA. כבר קיים spec טכני מלא ואב-טיפוס ב-Lovable.",
-    whyNow: "הפרויקט כבר מתוכנן ברמת spec. יש prototype. צריך רק לבנות production version. מתאים ל-2027 — אבל התכנון מתחיל עכשיו.",
+    subtitle: "אפליקציה ללימוד קריאת התורה בסגנון משחק. כבר יש תכנון מלא + אב-טיפוס.",
+    description: "אפליקציה בסגנון דואולינגו ללימוד טעמי המקרא ופרשת בר מצווה. מפת מסע עם שלבים, שיעורי אודיו, הקלטה ותרגול קולי, פאנל ניהול למורים. כבר קיים תכנון טכני מלא ואב-טיפוס ב-Lovable.",
+    whyNow: "הפרויקט כבר מתוכנן. יש אב-טיפוס. צריך רק לבנות גרסה סופית. מתאים ל-2027 — אבל התכנון מתחיל עכשיו.",
     originalPrice: 15000, weeks: 8, icon: Gamepad2, category: "special",
     impact: "מוצר חדש — שוק בר מצוות", replaces: "אין — מוצר חדש לגמרי",
   },
@@ -216,11 +216,11 @@ const ROADMAP = [
     quarter: "מיידי — אפריל-מאי 2026",
     emoji: "🔥",
     items: [
-      { name: "קמפיין כרטיס טיסה — להתניע את ה-Flywheel", status: "ready" as const },
-      { name: "אוטומציית ביטול + dunning — לעצור את הדליפה", status: "ready" as const },
+      { name: "קמפיין כרטיס טיסה — להתניע את ה-מנוע השיתופים", status: "ready" as const },
+      { name: "אוטומציית ביטול + טיפול באשראי כושל — לעצור את הדליפה", status: "ready" as const },
       { name: "דשבורד יומי + קבוצת WhatsApp — לראות מה קורה", status: "ready" as const },
-      { name: "Win-back — 417 משפחות שמחכות לחזור", status: "ready" as const },
-      { name: "Evergreen referral — בוט שלא נסגר", status: "ready" as const },
+      { name: "החזרת מנויים — 417 משפחות שמחכות לחזור", status: "ready" as const },
+      { name: "בוט קבוע הפניות — בוט שלא נסגר", status: "ready" as const },
       { name: "פלאו ברוכים הבאים — חוויית כניסה חכמה", status: "ready" as const },
     ],
   },
@@ -242,7 +242,7 @@ const ROADMAP = [
       { name: "לשונית הצגות + מכירה למוסדות", status: "future" as const },
       { name: "סיפורים באנגלית + צרפתית — שווקים חדשים", status: "future" as const },
       { name: "AI בקול מנחם (11Labs)", status: "future" as const },
-      { name: "חבילה שנתית + Premium", status: "future" as const },
+      { name: "חבילה שנתית + מסלול מיוחד", status: "future" as const },
       { name: "קמפיין חנוכה 2.0", status: "future" as const },
     ],
   },
@@ -444,7 +444,7 @@ export function ProposalClient() {
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-                <span>Flywheel מוכח שעובד כל פעם מחדש</span>
+                <span>מנוע השיתופים מוכח שעובד כל פעם מחדש</span>
               </li>
               <li className="flex gap-2">
                 <CheckCircle className="h-4 w-4 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -467,11 +467,11 @@ export function ProposalClient() {
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
-                <span>ביטול = עבודה ידנית ב-3 מערכות. אין dunning, אין סקר יציאה</span>
+                <span>ביטול = עבודה ידנית ב-3 מערכות. אין טיפול באשראי כושל, אין סקר יציאה</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
-                <span>אפריל: <strong>5 כניסות לבוט ביום</strong> — ה-Flywheel עומד</span>
+                <span>אפריל: <strong>5 כניסות לבוט ביום</strong> — ה-מנוע השיתופים עומד</span>
               </li>
               <li className="flex gap-2">
                 <span className="text-red-500 flex-shrink-0 mt-0.5">●</span>
@@ -510,7 +510,7 @@ export function ProposalClient() {
 
           <div className="bg-white/80 dark:bg-slate-800/80 rounded-xl p-4 text-sm text-muted-foreground space-y-2">
             <p><strong className="text-foreground">417 משפחות</strong> ששילמו לנו ונעלמו. לכל אחת יש שם, טלפון, ומייל ב-Cardcom.</p>
-            <p><strong className="text-foreground">מה חסר:</strong> אין dunning (הודעה כשאשראי נכשל), אין סקר יציאה (למה עזבו), אין ניסיון להחזיר אף משפחה.</p>
+            <p><strong className="text-foreground">מה חסר:</strong> אין טיפול באשראי כושל (הודעה כשאשראי נכשל), אין סקר יציאה (למה עזבו), אין ניסיון להחזיר אף משפחה.</p>
             <p className="text-red-600 dark:text-red-400 font-medium">כל חודש שעובר בלי טיפול = עוד 40-70 מנויים שזולגים החוצה.</p>
           </div>
         </div>
@@ -539,11 +539,11 @@ export function ProposalClient() {
             </div>
             <ul className="space-y-3 text-sm">
               {[
-                "Flywheel קפוא — 5 כניסות ביום",
+                "מנוע השיתופים קפוא — 5 כניסות ביום",
                 "60+ מנויים עוזבים בשקט כל חודש",
                 "ביטול = עבודה ידנית ב-3 מערכות",
                 "אין דשבורד — החלטות מתחושת בטן",
-                "אין dunning = כסף שדולף",
+                "אין טיפול באשראי כושל = כסף שדולף",
                 "קמפיינים ספונטניים — לפעמים 0 חודשים",
                 "417 משפחות שיושבות ומתקררות",
               ].map((item, i) => (
@@ -568,11 +568,11 @@ export function ProposalClient() {
             </div>
             <ul className="space-y-3 text-sm">
               {[
-                "Flywheel תמיד דולק — 200+ כניסות/יום בקמפיינים",
-                "Dunning תופס תשלומים כושלים אוטומטית",
+                "מנוע השיתופים תמיד דולק — 200+ כניסות/יום בקמפיינים",
+                "טיפול בתשלומים כושלים תופס תשלומים כושלים אוטומטית",
                 "סקר יציאה אומר לך למה משפחות עוזבות",
                 "דשבורד כל בוקר ב-08:00 — נתונים חיים",
-                "Win-back מחזיר מנויים שעזבו",
+                "החזרת מנויים מחזיר מנויים שעזבו",
                 "לוח שנה שנתי = 0 חודשים ריקים",
                 "פלטפורמה אחת מחליפה 5 כלים נפרדים",
               ].map((item, i) => (
@@ -718,7 +718,7 @@ export function ProposalClient() {
                       <p className="text-xs text-amber-700 dark:text-amber-400">{p.whyNow}</p>
                     </div>
                     <div className="flex flex-wrap gap-4 text-xs">
-                      <span className="text-emerald-600 dark:text-emerald-400"><strong>אימפקט:</strong> {p.impact}</span>
+                      <span className="text-emerald-600 dark:text-emerald-400"><strong>תוצאה:</strong> {p.impact}</span>
                       <span className="text-slate-500 dark:text-slate-400"><strong>מחליף:</strong> {p.replaces}</span>
                       <span className="text-amber-600 dark:text-amber-400">
                         <strong>חסכת:</strong> {fmtCurrency(saved)} ({Math.round(DISCOUNT * 100)}% הנחה)
