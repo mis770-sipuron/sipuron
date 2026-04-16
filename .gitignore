@@ -41,3 +41,11 @@ yarn-error.log*
 next-env.d.ts
 bot/sessions.json
 bot/media/
+bot/node_modules/
+bot/sessions.json
+bot/media/
+bot/system-prompt.txt
+bot/bot-settings.json
+bot/config.json
+bot/bot.js
+bot/package-lock.json

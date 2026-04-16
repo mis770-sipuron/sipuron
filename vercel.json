@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync-cardcom",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/sync-greenapi",
+      "schedule": "10 3 * * *"
+    },
+    {
+      "path": "/api/cron/daily-dashboard",
+      "schedule": "0 5 * * *"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ function getConfig() {
 
 function buildUrl(method: string): string {
   const { instanceId, apiToken } = getConfig();
-  return `https://api.green-api.com/waInstance${instanceId}/${method}/${apiToken}`;
+  return `https://7105.api.greenapi.com/waInstance${instanceId}/${method}/${apiToken}`;
 }
 
 async function greenApiPost<T>(method: string, body: Record<string, unknown>): Promise<T> {
@@ -152,7 +152,7 @@ export async function getGroups(): Promise<GreenApiGroup[]> {
 export async function getGroupInfo(
   groupId: string
 ): Promise<GreenApiGroup> {
-  return greenApiPost<GreenApiGroup>("getContactInfo", {
-    chatId: groupId,
+  return greenApiPost<GreenApiGroup>("getGroupData", {
+    groupId,
   });
 }

@@ -3,6 +3,7 @@ import type {
   CardcomFailedTransaction,
   CardcomResponse,
   CardcomRefundResponse,
+  CardcomTransactionsResponse,
 } from "./types";
 
 const BASE_URL = "https://secure.cardcom.solutions/api/v11/";
@@ -50,15 +51,17 @@ async function cardcomPost<T>(endpoint: string, body: Record<string, unknown>): 
 export async function getTransactions(
   fromDate: string,
   toDate: string
-): Promise<CardcomResponse<CardcomTransaction>> {
+): Promise<CardcomTransactionsResponse> {
   const credentials = getCredentials();
 
-  return cardcomPost<CardcomResponse<CardcomTransaction>>(
+  return cardcomPost<CardcomTransactionsResponse>(
     "Financial/CreditCardTransactions",
     {
       ...credentials,
-      FromDate: fromDate,
-      ToDate: toDate,
+      FromCreateDate: fromDate,
+      ToCreateDate: toDate,
+      Page_Size: 2000,
+      Page: 1,
     }
   );
 }
@@ -78,8 +81,10 @@ export async function getFailedTransactions(
     "Transactions/SpecialTransactions",
     {
       ...credentials,
-      FromDate: fromDate,
-      ToDate: toDate,
+      FromCreateDate: fromDate,
+      ToCreateDate: toDate,
+      Page_Size: 2000,
+      Page: 1,
     }
   );
 }

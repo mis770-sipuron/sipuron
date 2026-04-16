@@ -1,19 +1,29 @@
 // Cardcom API response types
 
 export interface CardcomTransaction {
-  TransactionId: number;
+  Id: number;
   Amount: number;
-  CardOwnerName: string;
-  Last4Digits: string;
-  TransactionDate: string;
-  StatusCode: number;
-  StatusDescription: string;
-  NumOfPayments: number;
-  FirstPaymentAmount: number;
-  RestPaymentsAmount: number;
-  Currency: string;
-  InvoiceNumber: string;
-  CustomField: string;
+  Last4DigitsStr: string;
+  Last4Digits: number;
+  CreateDate: string;
+  TransacDate: string;
+  NoPayments: number;
+  ActionCode: number;
+  CouponNumber: string;
+  AuthorizeNo: string;
+  Brand: number;
+  Currency: number;
+  // Keep old field names as optional aliases
+  TransactionId?: number;
+  CardOwnerName?: string;
+  TransactionDate?: string;
+  StatusCode?: number;
+  StatusDescription?: string;
+  NumOfPayments?: number;
+  FirstPaymentAmount?: number;
+  RestPaymentsAmount?: number;
+  InvoiceNumber?: string;
+  CustomField?: string;
 }
 
 export interface CardcomFailedTransaction {
@@ -35,6 +45,14 @@ export interface CardcomRefundResult {
   Amount: number;
   StatusCode: number;
   StatusDescription: string;
+}
+
+export interface CardcomTransactionsResponse {
+  ResponseCode: number;
+  Description: string;
+  Page: number;
+  Page_size: number;
+  CreditCardTransactions: CardcomTransaction[];
 }
 
 export interface CardcomResponse<T> {
