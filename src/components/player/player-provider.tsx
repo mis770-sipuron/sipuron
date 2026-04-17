@@ -101,6 +101,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const audio = audioRef.current
     if (!audio) return
 
+    const fallbackAudio = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+    const url = story.audioUrl || fallbackAudio
+
     // If same story, just resume
     setCurrentStory((prev) => {
       if (prev?.id === story.id) {
@@ -108,12 +111,12 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         return prev
       }
       // New story
-      audio.src = story.audioUrl
+      audio.src = url
       audio.load()
       audio.play()
       setCurrentTime(0)
       setDuration(story.duration || 0)
-      return story
+      return { ...story, audioUrl: url }
     })
   }, [])
 

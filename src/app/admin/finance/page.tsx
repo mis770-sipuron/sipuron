@@ -29,36 +29,39 @@ import {
 } from "@/lib/hooks/use-cardcom-data"
 
 /* ───────── KPI data ───────── */
+// TODO: Replace with dynamic Supabase fetch (cardcom_transactions + whatsapp_groups)
+// Data synced from Cardcom on 2026-04-16: March=45,081 NIS, April(partial)=25,600 NIS
+// Communities synced from Green API: 36 announcement groups, 15,719 members
 const KPIs = [
   {
-    title: "MRR",
-    value: fmtCurrency(45216),
-    change: "+12.3%",
-    subtitle: "מהחודש שעבר",
+    title: "MRR (מרץ)",
+    value: fmtCurrency(45081),
+    change: "+27.3%",
+    subtitle: "מפברואר (35,415)",
     trend: "up" as const,
     icon: DollarSign,
   },
   {
-    title: "ARR",
-    value: fmtCurrency(542592),
-    change: "",
-    subtitle: "הכנסה שנתית חוזרת",
+    title: "אפריל (חלקי)",
+    value: fmtCurrency(25600),
+    change: "598 עסקאות",
+    subtitle: "עד 16/04",
     trend: "up" as const,
     icon: CreditCard,
   },
   {
-    title: "מנויים פעילים",
-    value: "836",
-    change: "+201",
-    subtitle: "חדשים במרץ",
+    title: "קהילות הכרזות",
+    value: "15,719",
+    change: "36 קבוצות",
+    subtitle: "חברים בקבוצות סיפורון",
     trend: "up" as const,
     icon: Users,
   },
   {
     title: "שיעור נטישה",
     value: "0.1%",
-    change: "-0.2pp",
-    subtitle: "ירידה מהחודש שעבר",
+    change: "0 ביטולים באפריל",
+    subtitle: "ביטול 1 במרץ",
     trend: "down" as const,
     icon: Percent,
   },

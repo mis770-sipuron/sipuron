@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { usePlayer } from "@/components/player/player-provider"
 
 const SAMPLE_STORIES = [
   {
@@ -37,6 +38,8 @@ const SAMPLE_STORIES = [
 ]
 
 export function SampleStories() {
+  const { play } = usePlayer()
+
   return (
     <section className="py-16 sm:py-20 bg-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -90,6 +93,13 @@ export function SampleStories() {
                   <Button
                     size="icon"
                     className="h-14 w-14 rounded-full bg-primary/90 hover:bg-primary shadow-lg hover:scale-110 transition-transform"
+                    onClick={() => play({
+                      id: story.id,
+                      title: story.title,
+                      audioUrl: "",
+                      coverImage: "",
+                      duration: story.duration * 60,
+                    })}
                   >
                     <Play className="h-6 w-6 fill-current" />
                   </Button>
