@@ -5,24 +5,23 @@ import { STORY_CATEGORIES } from "@/lib/constants"
 import { motion } from "framer-motion"
 
 export function CategoriesPreview() {
-  // Calculate delay so center pills appear first and outer ones follow
   const total = STORY_CATEGORIES.length
   const center = (total - 1) / 2
 
   return (
-    <section className="py-16 sm:py-20 bg-background">
+    <section className="py-20 sm:py-28 bg-background relative">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="text-center mb-10"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+          transition={{ duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
         >
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-foreground">
             סיפורים לכל רגע
           </h2>
-          <p className="mt-3 text-lg text-muted-foreground">
+          <p className="mt-4 text-lg text-muted-foreground">
             200+ סיפורים מחולקים לקטגוריות — תמיד תמצאו מה להאזין
           </p>
         </motion.div>
@@ -35,18 +34,28 @@ export function CategoriesPreview() {
             return (
               <motion.div
                 key={cat.slug}
-                initial={{ opacity: 0, scale: 0.7 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, scale: 0.7, y: 10 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, type: "spring", stiffness: 150, damping: 12, delay }}
-                whileHover={{ scale: 1.05 }}
+                transition={{
+                  duration: 0.4,
+                  type: "spring",
+                  stiffness: 150,
+                  damping: 12,
+                  delay,
+                }}
+                whileHover={{ scale: 1.08, y: -2 }}
               >
                 <Link
                   href={`/categories/${cat.slug}`}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="group inline-flex items-center gap-2.5 px-5 py-3 rounded-full glass-card hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 transition-all duration-300"
                 >
-                  <span className="text-xl">{cat.icon}</span>
-                  <span className="text-sm font-medium text-foreground">{cat.name}</span>
+                  <span className="text-xl group-hover:scale-110 transition-transform">
+                    {cat.icon}
+                  </span>
+                  <span className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
+                    {cat.name}
+                  </span>
                 </Link>
               </motion.div>
             )

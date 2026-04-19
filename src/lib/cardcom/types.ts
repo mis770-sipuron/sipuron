@@ -61,6 +61,12 @@ export interface CardcomResponse<T> {
   Results: T[];
 }
 
+export interface CardcomSpecialTransactionsResponse {
+  ResponseCode: number;
+  Description: string;
+  SpecialTransactions: CardcomFailedTransaction[];
+}
+
 export interface CardcomRefundResponse {
   ResponseCode: number;
   Description: string;

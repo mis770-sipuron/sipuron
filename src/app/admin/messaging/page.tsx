@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,184 +11,86 @@ import {
 } from "@/components/ui/table"
 import {
   Send, Bot, Users, MessageSquare, Radio, Search,
-  Plus, ExternalLink, AlertTriangle, Eye, Clock, CheckCheck,
+  Plus, ExternalLink, AlertTriangle, Eye, Clock, CheckCheck, Loader2,
 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
-// ─── Mock Data ───────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────
 
-const BROADCASTS = [
-  {
-    id: 1,
-    title: "סיפור יומי — האריה והנמלה",
-    date: "2026-04-14",
-    recipients: 1180,
-    delivered: 1152,
-    read: 987,
-    status: "sent" as const,
-  },
-  {
-    id: 2,
-    title: "מבצע כרטיס טיסה — ₪5 לחודש",
-    date: "2026-04-13",
-    recipients: 1226,
-    delivered: 1200,
-    read: 1044,
-    status: "sent" as const,
-  },
-  {
-    id: 3,
-    title: "סיפור יומי — הנסיכה והצפרדע",
-    date: "2026-04-12",
-    recipients: 1170,
-    delivered: 1140,
-    read: 912,
-    status: "sent" as const,
-  },
-  {
-    id: 4,
-    title: "עדכון — סיפורים חדשים לפסח",
-    date: "2026-04-15",
-    recipients: 1226,
-    delivered: 0,
-    read: 0,
-    status: "scheduled" as const,
-  },
-  {
-    id: 5,
-    title: "סקר שביעות רצון חודשי",
-    date: "2026-04-10",
-    recipients: 0,
-    delivered: 0,
-    read: 0,
-    status: "draft" as const,
-  },
-]
+interface Broadcast {
+  id: string
+  title: string
+  date: string
+  recipients: number
+  delivered: number
+  read: number
+  status: "sent" | "scheduled" | "draft"
+}
 
-const BOT_FLOWS = [
+interface BotFlow {
+  trigger: string
+  description: string
+  status: "active" | "planned"
+  messageCount: number
+}
+
+interface Group {
+  id: string
+  name: string
+  members: number
+  capacity: number
+  status: string
+  inviteLink: string
+}
+
+interface Contact {
+  id: string
+  name: string
+  phone: string
+  source: "signup" | "bot" | "import"
+  tags: string[]
+  engagement: number
+  lastMessage: string
+}
+
+// ─── Mock Data (for broadcasts & bot — no real data tables yet) ───
+
+const MOCK_BOT_FLOWS: BotFlow[] = [
   {
     trigger: "הודעה ראשונה",
     description: "Welcome flow — 4 הודעות ברצף",
-    status: "active" as const,
+    status: "active",
     messageCount: 4,
   },
   {
     trigger: "הצטרפות",
     description: "קישור לדף המכירה",
-    status: "active" as const,
+    status: "active",
     messageCount: 1,
   },
   {
     trigger: "ביטול",
     description: "Retention flow — הנחה + שאלון סיבה",
-    status: "active" as const,
+    status: "active",
     messageCount: 3,
   },
   {
     trigger: "סיפור / מה מומלץ",
     description: "ממליץ סיפורים לפי גיל וטעם",
-    status: "planned" as const,
+    status: "planned",
     messageCount: 0,
   },
   {
     trigger: "עזרה",
     description: "FAQ — שאלות נפוצות",
-    status: "active" as const,
+    status: "active",
     messageCount: 5,
   },
   {
     trigger: "כשל תשלום",
     description: "Dunning flow — תזכורת תשלום + עדכון כרטיס",
-    status: "planned" as const,
+    status: "planned",
     messageCount: 0,
-  },
-]
-
-const GROUPS = [
-  {
-    name: "סיפורון 16",
-    members: 1850,
-    capacity: 2000,
-    status: "active" as const,
-    inviteLink: "https://chat.whatsapp.com/abc16",
-  },
-  {
-    name: "סיפורון 17",
-    members: 1200,
-    capacity: 2000,
-    status: "active" as const,
-    inviteLink: "https://chat.whatsapp.com/abc17",
-  },
-  {
-    name: "סיפורון 18",
-    members: 450,
-    capacity: 2000,
-    status: "active" as const,
-    inviteLink: "https://chat.whatsapp.com/abc18",
-  },
-  {
-    name: "סיפורון VIP",
-    members: 320,
-    capacity: 2000,
-    status: "active" as const,
-    inviteLink: "https://chat.whatsapp.com/vip1",
-  },
-  {
-    name: "סיפורון — הורים",
-    members: 980,
-    capacity: 2000,
-    status: "active" as const,
-    inviteLink: "https://chat.whatsapp.com/parents1",
-  },
-]
-
-const CONTACTS = [
-  {
-    name: "שרה כהן",
-    phone: "050-1234567",
-    source: "signup" as const,
-    tags: ["מנוי פעיל", "חודשי"],
-    engagement: 92,
-    lastMessage: "2026-04-14",
-  },
-  {
-    name: "דוד לוי",
-    phone: "052-9876543",
-    source: "bot" as const,
-    tags: ["מנוי פעיל", "שנתי"],
-    engagement: 85,
-    lastMessage: "2026-04-13",
-  },
-  {
-    name: "רחל מזרחי",
-    phone: "054-5551234",
-    source: "signup" as const,
-    tags: ["ביטול"],
-    engagement: 15,
-    lastMessage: "2026-04-10",
-  },
-  {
-    name: "יעקב אברהם",
-    phone: "058-7771234",
-    source: "import" as const,
-    tags: ["מנוי פעיל", "חודשי", "VIP"],
-    engagement: 98,
-    lastMessage: "2026-04-14",
-  },
-  {
-    name: "מרים ביטון",
-    phone: "050-3334444",
-    source: "bot" as const,
-    tags: ["ליד"],
-    engagement: 45,
-    lastMessage: "2026-04-11",
-  },
-  {
-    name: "אלי פרץ",
-    phone: "053-2221111",
-    source: "signup" as const,
-    tags: ["מנוי פעיל", "חודשי"],
-    engagement: 72,
-    lastMessage: "2026-04-12",
   },
 ]
 
@@ -251,24 +153,41 @@ function StatCard({
   )
 }
 
-// ─── Tab: Broadcasts ─────────────────────────────────────────
+// ─── Tab: Broadcasts (from Supabase broadcasts table) ────────
 
 function BroadcastsTab() {
-  const totalSent = BROADCASTS.filter((b) => b.status === "sent").reduce(
-    (acc, b) => acc + b.recipients,
-    0
-  )
-  const totalDelivered = BROADCASTS.filter((b) => b.status === "sent").reduce(
-    (acc, b) => acc + b.delivered,
-    0
-  )
-  const totalRead = BROADCASTS.filter((b) => b.status === "sent").reduce(
-    (acc, b) => acc + b.read,
-    0
-  )
-  const lastBroadcast = BROADCASTS.filter((b) => b.status === "sent").sort(
-    (a, b) => b.date.localeCompare(a.date)
-  )[0]
+  const [broadcasts, setBroadcasts] = useState<Broadcast[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from("broadcasts")
+      .select("id, title, scheduled_at, sent_at, total_recipients, delivered, status")
+      .order("scheduled_at", { ascending: false })
+      .limit(20)
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setBroadcasts(
+            data.map((b: any) => ({
+              id: b.id,
+              title: b.title,
+              date: b.sent_at || b.scheduled_at || "",
+              recipients: b.total_recipients || 0,
+              delivered: b.delivered || 0,
+              read: 0, // no read tracking column yet
+              status: b.status === "sent" ? "sent" : b.status === "scheduled" ? "scheduled" : "draft",
+            }))
+          )
+        }
+        setLoading(false)
+      })
+  }, [])
+
+  const sentBroadcasts = broadcasts.filter((b) => b.status === "sent")
+  const totalSent = sentBroadcasts.reduce((acc, b) => acc + b.recipients, 0)
+  const totalDelivered = sentBroadcasts.reduce((acc, b) => acc + b.delivered, 0)
+  const lastBroadcast = sentBroadcasts.sort((a, b) => b.date.localeCompare(a.date))[0]
 
   return (
     <div className="space-y-6">
@@ -276,7 +195,7 @@ function BroadcastsTab() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="סה״כ נשלחו" value={totalSent.toLocaleString("he-IL")} icon={Send} />
         <StatCard label="שיעור מסירה" value={pct(totalDelivered, totalSent)} icon={CheckCheck} />
-        <StatCard label="שיעור קריאה" value={pct(totalRead, totalSent)} icon={Eye} />
+        <StatCard label="שידורים" value={broadcasts.length} icon={Eye} />
         <StatCard
           label="שידור אחרון"
           value={lastBroadcast ? new Date(lastBroadcast.date).toLocaleDateString("he-IL") : "—"}
@@ -294,41 +213,53 @@ function BroadcastsTab() {
 
       {/* Table */}
       <Card className="p-0 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-right">כותרת</TableHead>
-              <TableHead className="text-right">תאריך</TableHead>
-              <TableHead className="text-right">נמענים</TableHead>
-              <TableHead className="text-right">נמסרו</TableHead>
-              <TableHead className="text-right">נקראו</TableHead>
-              <TableHead className="text-right">סטטוס</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {BROADCASTS.map((b) => (
-              <TableRow key={b.id}>
-                <TableCell className="font-medium">{b.title}</TableCell>
-                <TableCell>{new Date(b.date).toLocaleDateString("he-IL")}</TableCell>
-                <TableCell>{b.recipients.toLocaleString("he-IL")}</TableCell>
-                <TableCell>{b.status === "sent" ? b.delivered.toLocaleString("he-IL") : "—"}</TableCell>
-                <TableCell>{b.status === "sent" ? b.read.toLocaleString("he-IL") : "—"}</TableCell>
-                <TableCell>{statusBadge(b.status)}</TableCell>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <span className="mr-2 text-muted-foreground">טוען...</span>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-right">כותרת</TableHead>
+                <TableHead className="text-right">תאריך</TableHead>
+                <TableHead className="text-right">נמענים</TableHead>
+                <TableHead className="text-right">נמסרו</TableHead>
+                <TableHead className="text-right">סטטוס</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {broadcasts.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                    אין שידורים
+                  </TableCell>
+                </TableRow>
+              )}
+              {broadcasts.map((b) => (
+                <TableRow key={b.id}>
+                  <TableCell className="font-medium">{b.title}</TableCell>
+                  <TableCell>{b.date ? new Date(b.date).toLocaleDateString("he-IL") : "—"}</TableCell>
+                  <TableCell>{b.recipients.toLocaleString("he-IL")}</TableCell>
+                  <TableCell>{b.status === "sent" ? b.delivered.toLocaleString("he-IL") : "—"}</TableCell>
+                  <TableCell>{statusBadge(b.status)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </Card>
     </div>
   )
 }
 
-// ─── Tab: Bot Flows ──────────────────────────────────────────
+// ─── Tab: Bot Flows (still static — no dynamic table) ───────
 
 function BotFlowsTab() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {BOT_FLOWS.map((flow) => (
+      {MOCK_BOT_FLOWS.map((flow) => (
         <Card key={flow.trigger} className="p-5">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -367,10 +298,36 @@ function BotFlowsTab() {
   )
 }
 
-// ─── Tab: Groups ─────────────────────────────────────────────
+// ─── Tab: Groups (from Supabase whatsapp_groups) ────────────
 
 function GroupsTab() {
-  const nearCapacity = GROUPS.filter((g) => g.members > 1800)
+  const [groups, setGroups] = useState<Group[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from("whatsapp_groups")
+      .select("id, name, member_count, max_capacity, status, invite_link")
+      .order("name", { ascending: true })
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setGroups(
+            data.map((g: any) => ({
+              id: g.id,
+              name: g.name,
+              members: g.member_count || 0,
+              capacity: g.max_capacity || 2000,
+              status: g.status || "active",
+              inviteLink: g.invite_link || "",
+            }))
+          )
+        }
+        setLoading(false)
+      })
+  }, [])
+
+  const nearCapacity = groups.filter((g) => g.members > 1800)
 
   return (
     <div className="space-y-6">
@@ -402,78 +359,146 @@ function GroupsTab() {
 
       {/* Table */}
       <Card className="p-0 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-right">שם קבוצה</TableHead>
-              <TableHead className="text-right">חברים</TableHead>
-              <TableHead className="text-right">קיבולת</TableHead>
-              <TableHead className="text-right min-w-[140px]">מילוי</TableHead>
-              <TableHead className="text-right">סטטוס</TableHead>
-              <TableHead className="text-right">קישור הזמנה</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {GROUPS.map((g) => {
-              const fillPct = Math.round((g.members / g.capacity) * 100)
-              const isNearFull = g.members > 1800
-              return (
-                <TableRow key={g.name}>
-                  <TableCell className="font-medium">{g.name}</TableCell>
-                  <TableCell>{g.members.toLocaleString("he-IL")}</TableCell>
-                  <TableCell>{g.capacity.toLocaleString("he-IL")}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Progress
-                        value={fillPct}
-                        className={isNearFull ? "[&_[data-slot=progress-indicator]]:bg-amber-500" : ""}
-                      />
-                      <span className={`text-xs font-medium tabular-nums ${isNearFull ? "text-amber-500" : "text-muted-foreground"}`}>
-                        {fillPct}%
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">פעילה</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" asChild>
-                      <a href={g.inviteLink} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <span className="mr-2 text-muted-foreground">טוען...</span>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-right">שם קבוצה</TableHead>
+                <TableHead className="text-right">חברים</TableHead>
+                <TableHead className="text-right">קיבולת</TableHead>
+                <TableHead className="text-right min-w-[140px]">מילוי</TableHead>
+                <TableHead className="text-right">סטטוס</TableHead>
+                <TableHead className="text-right">קישור הזמנה</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {groups.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    אין קבוצות
                   </TableCell>
                 </TableRow>
-              )
-            })}
-          </TableBody>
-        </Table>
+              )}
+              {groups.map((g) => {
+                const fillPct = Math.round((g.members / g.capacity) * 100)
+                const isNearFull = g.members > 1800
+                return (
+                  <TableRow key={g.id}>
+                    <TableCell className="font-medium">{g.name}</TableCell>
+                    <TableCell>{g.members.toLocaleString("he-IL")}</TableCell>
+                    <TableCell>{g.capacity.toLocaleString("he-IL")}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Progress
+                          value={fillPct}
+                          className={isNearFull ? "[&_[data-slot=progress-indicator]]:bg-amber-500" : ""}
+                        />
+                        <span className={`text-xs font-medium tabular-nums ${isNearFull ? "text-amber-500" : "text-muted-foreground"}`}>
+                          {fillPct}%
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {g.status === "active" ? "פעילה" : g.status === "full" ? "מלאה" : "ארכיון"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {g.inviteLink ? (
+                        <Button variant="ghost" size="sm" asChild>
+                          <a href={g.inviteLink} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      ) : (
+                        <span className="text-muted-foreground text-xs">—</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+        )}
       </Card>
     </div>
   )
 }
 
-// ─── Tab: Contacts ───────────────────────────────────────────
+// ─── Tab: Contacts (from Supabase contacts table) ───────────
 
 function ContactsTab() {
   const [search, setSearch] = useState("")
-  const totalContacts = 1226
-  const activeContacts = CONTACTS.filter((c) => c.engagement > 50).length
-  const allTags = [...new Set(CONTACTS.flatMap((c) => c.tags))]
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const [loading, setLoading] = useState(true)
+  const [totalContacts, setTotalContacts] = useState(0)
 
-  const filtered = CONTACTS.filter(
-    (c) =>
-      c.name.includes(search) ||
-      c.phone.includes(search) ||
-      c.tags.some((t) => t.includes(search))
-  )
+  const fetchContacts = useCallback(async () => {
+    setLoading(true)
+    const supabase = createClient()
+
+    let query = supabase
+      .from("contacts")
+      .select("id, name, phone, source, tags, engagement_score, last_message_at")
+      .order("last_message_at", { ascending: false })
+
+    if (search.trim()) {
+      query = query.or(
+        `name.ilike.%${search.trim()}%,phone.ilike.%${search.trim()}%`
+      )
+    }
+
+    const { data, error } = await query.limit(100)
+
+    if (!error && data) {
+      setContacts(
+        data.map((c: any) => ({
+          id: c.id,
+          name: c.name || "---",
+          phone: c.phone || "---",
+          source: (c.source === "signup" || c.source === "bot" ? c.source : "import") as "signup" | "bot" | "import",
+          tags: Array.isArray(c.tags) ? c.tags : [],
+          engagement: c.engagement_score || 0,
+          lastMessage: c.last_message_at || "",
+        }))
+      )
+    }
+    setLoading(false)
+  }, [search])
+
+  // Count total contacts once
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from("contacts")
+      .select("id", { count: "exact", head: true })
+      .then(({ count }) => {
+        setTotalContacts(count ?? 0)
+      })
+  }, [])
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchContacts()
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [fetchContacts])
+
+  const activeContacts = contacts.filter((c) => c.engagement > 50).length
+  const allTags = [...new Set(contacts.flatMap((c) => c.tags))]
 
   return (
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <StatCard label="סה״כ אנשי קשר" value={totalContacts.toLocaleString("he-IL")} icon={Users} />
-        <StatCard label="פעילים" value={activeContacts} icon={MessageSquare} />
+        <StatCard label="פעילים (מתצוגה)" value={activeContacts} icon={MessageSquare} />
         <StatCard label="תגיות" value={allTags.length} icon={Radio} />
       </div>
 
@@ -490,58 +515,72 @@ function ContactsTab() {
 
       {/* Table */}
       <Card className="p-0 overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-right">שם</TableHead>
-              <TableHead className="text-right">טלפון</TableHead>
-              <TableHead className="text-right">מקור</TableHead>
-              <TableHead className="text-right">תגיות</TableHead>
-              <TableHead className="text-right">מעורבות</TableHead>
-              <TableHead className="text-right">הודעה אחרונה</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.map((c) => (
-              <TableRow key={c.phone}>
-                <TableCell className="font-medium">{c.name}</TableCell>
-                <TableCell className="tabular-nums" dir="ltr">
-                  {c.phone}
-                </TableCell>
-                <TableCell>{sourceBadge(c.source)}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {c.tags.map((t) => (
-                      <Badge key={t} variant="outline" className="text-xs">
-                        {t}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Progress
-                      value={c.engagement}
-                      className={
-                        c.engagement >= 80
-                          ? "[&_[data-slot=progress-indicator]]:bg-emerald-500"
-                          : c.engagement >= 50
-                            ? "[&_[data-slot=progress-indicator]]:bg-amber-500"
-                            : "[&_[data-slot=progress-indicator]]:bg-red-500"
-                      }
-                    />
-                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
-                      {c.engagement}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {new Date(c.lastMessage).toLocaleDateString("he-IL")}
-                </TableCell>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <span className="mr-2 text-muted-foreground">טוען...</span>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-right">שם</TableHead>
+                <TableHead className="text-right">טלפון</TableHead>
+                <TableHead className="text-right">מקור</TableHead>
+                <TableHead className="text-right">תגיות</TableHead>
+                <TableHead className="text-right">מעורבות</TableHead>
+                <TableHead className="text-right">הודעה אחרונה</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {contacts.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                    לא נמצאו אנשי קשר
+                  </TableCell>
+                </TableRow>
+              )}
+              {contacts.map((c) => (
+                <TableRow key={c.id}>
+                  <TableCell className="font-medium">{c.name}</TableCell>
+                  <TableCell className="tabular-nums" dir="ltr">
+                    {c.phone}
+                  </TableCell>
+                  <TableCell>{sourceBadge(c.source)}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {c.tags.map((t) => (
+                        <Badge key={t} variant="outline" className="text-xs">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Progress
+                        value={c.engagement}
+                        className={
+                          c.engagement >= 80
+                            ? "[&_[data-slot=progress-indicator]]:bg-emerald-500"
+                            : c.engagement >= 50
+                              ? "[&_[data-slot=progress-indicator]]:bg-amber-500"
+                              : "[&_[data-slot=progress-indicator]]:bg-red-500"
+                        }
+                      />
+                      <span className="text-xs font-medium tabular-nums text-muted-foreground">
+                        {c.engagement}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {c.lastMessage ? new Date(c.lastMessage).toLocaleDateString("he-IL") : "—"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </Card>
     </div>
   )

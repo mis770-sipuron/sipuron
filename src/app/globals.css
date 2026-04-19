@@ -229,14 +229,114 @@
   background-size: 200% 100%;
 }
 
-/* ══════ PREMIUM EFFECTS (from Lovable) ══════ */
+/* ══════ PREMIUM EFFECTS ══════ */
 
-/* Gold gradient button */
+/* --- Easing Functions --- */
+:root {
+  --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-decel: cubic-bezier(0, 0, 0.2, 1);
+  --ease-accel: cubic-bezier(0.4, 0, 1, 1);
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 700ms;
+}
+
+/* --- Noise Texture Overlay --- */
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* --- Gradient Mesh Background --- */
+.gradient-mesh {
+  position: relative;
+}
+.gradient-mesh::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(246, 176, 56, 0.12), transparent),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(124, 58, 237, 0.08), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(251, 113, 133, 0.06), transparent);
+  filter: blur(80px);
+}
+.dark .gradient-mesh::after {
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(245, 158, 11, 0.08), transparent),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(167, 139, 250, 0.06), transparent),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(251, 113, 133, 0.04), transparent);
+}
+
+/* --- Animated Gradient Border --- */
+@keyframes gradientRotate {
+  0% { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animated-border {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.animated-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  margin: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--gradient-angle),
+    #F59E0B, #7C3AED, #FB7185, #F59E0B
+  );
+  animation: gradientRotate 4s linear infinite;
+}
+
+/* --- Section Divider (wave) --- */
+.section-divider-wave {
+  position: relative;
+}
+.section-divider-wave::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' fill='none'%3E%3Cpath d='M0 48h1440V16c-240-21.3-480-32-720-32S240-5.3 0 16v32z' fill='%23FFFBF0'/%3E%3C/svg%3E") no-repeat bottom center;
+  background-size: cover;
+  pointer-events: none;
+  z-index: 2;
+}
+.dark .section-divider-wave::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' fill='none'%3E%3Cpath d='M0 48h1440V16c-240-21.3-480-32-720-32S240-5.3 0 16v32z' fill='%230F172A'/%3E%3C/svg%3E");
+}
+
+/* --- Gold gradient button --- */
 .gradient-gold {
   background: linear-gradient(135deg, #F6B038 0%, #E5A030 100%);
 }
 
-/* Shimmer effect on buttons */
+/* --- Shimmer effect on buttons --- */
 @keyframes shimmerSlide {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -254,15 +354,37 @@
   animation: shimmerSlide 2s infinite;
 }
 
-/* Premium glow effects */
+/* --- Premium glow effects --- */
 .glow-gold {
   box-shadow: 0 0 30px rgba(246, 176, 56, 0.4), 0 4px 16px rgba(246, 176, 56, 0.3);
 }
 .glow-primary {
   box-shadow: 0 0 30px rgba(217, 119, 6, 0.3);
 }
+.glow-purple {
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.25), 0 4px 16px rgba(124, 58, 237, 0.15);
+}
 
-/* Button pulse for CTA */
+/* --- Text shimmer animation --- */
+@keyframes textShimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.text-shimmer {
+  background: linear-gradient(
+    110deg,
+    var(--foreground) 35%,
+    rgba(245, 158, 11, 0.8) 50%,
+    var(--foreground) 65%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 4s linear infinite;
+}
+
+/* --- Button pulse for CTA --- */
 @keyframes btnBounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }
@@ -271,7 +393,7 @@
   animation: btnBounce 1.8s ease-in-out infinite;
 }
 
-/* Float animation for decorative elements */
+/* --- Float animation --- */
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -280,7 +402,7 @@
   animation: float 4s ease-in-out infinite;
 }
 
-/* Twinkle effect */
+/* --- Twinkle effect --- */
 @keyframes twinkle {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.2); }
@@ -289,7 +411,7 @@
   animation: twinkle 3s ease-in-out infinite;
 }
 
-/* Flame pulse for streaks */
+/* --- Flame pulse --- */
 @keyframes flamePulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
@@ -298,7 +420,7 @@
   animation: flamePulse 1.5s ease-in-out infinite;
 }
 
-/* Node glow for active quest items */
+/* --- Node glow --- */
 @keyframes nodeGlow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
   50% { box-shadow: 0 0 0 8px rgba(14, 165, 233, 0); }
@@ -307,9 +429,10 @@
   animation: nodeGlow 2s ease-in-out infinite;
 }
 
-/* Premium card hover (Lovable style) */
+/* --- Premium card hover --- */
 .premium-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform var(--duration-base) var(--ease-snappy),
+              box-shadow var(--duration-base) var(--ease-snappy);
   box-shadow: var(--shadow-card);
 }
 .premium-card:hover {
@@ -317,26 +440,34 @@
   box-shadow: var(--shadow-hover);
 }
 
-/* Glass card (Lovable enhanced) */
+/* --- Glass card (enhanced) --- */
 .glass-card {
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(210, 210, 210, 0.5);
+  backdrop-filter: blur(16px) saturate(1.6);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .dark .glass-card {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-/* Text gradient effects */
+/* --- Text gradient effects --- */
 .text-gradient-gold {
   background: linear-gradient(135deg, #F6B038 0%, #D4950A 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+.text-gradient-warm {
+  background: linear-gradient(135deg, #F59E0B 0%, #EF4444 50%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-/* Scroll gallery animation */
+/* --- Scroll gallery animation --- */
 @keyframes scrollRight {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -345,12 +476,67 @@
   animation: scrollRight 40s linear infinite;
 }
 
-/* Safe area for mobile (notched phones) */
+/* --- Sparkle particle keyframes --- */
+@keyframes sparkleFloat {
+  0% { transform: translateY(0) scale(0); opacity: 0; }
+  20% { transform: translateY(-20px) scale(1); opacity: 1; }
+  80% { transform: translateY(-80px) scale(0.8); opacity: 0.6; }
+  100% { transform: translateY(-100px) scale(0); opacity: 0; }
+}
+.animate-sparkle {
+  animation: sparkleFloat 3s ease-out infinite;
+}
+
+/* --- Timeline connector line (How It Works) --- */
+.timeline-connector {
+  position: relative;
+}
+.timeline-connector::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to left, transparent, var(--primary), transparent);
+  opacity: 0.2;
+  z-index: 0;
+}
+
+/* --- Count-up number style --- */
+.count-up-number {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* --- Magnetic button base --- */
+.magnetic-btn {
+  transition: transform var(--duration-fast) var(--ease-snappy);
+}
+
+/* --- Safe area for mobile --- */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-/* Mobile touch optimization */
+/* --- Reduced motion respect --- */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-twinkle,
+  .animate-flame-pulse,
+  .animate-node-glow,
+  .animate-btn-bounce,
+  .animate-sparkle,
+  .shimmer-effect::after,
+  .animated-border::before {
+    animation: none !important;
+  }
+  .premium-card:hover {
+    transform: none;
+  }
+}
+
+/* --- Mobile touch optimization --- */
 @media (hover: none) {
   .premium-card:hover {
     transform: none;

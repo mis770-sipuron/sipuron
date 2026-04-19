@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -12,8 +12,9 @@ import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import {
-  Search, Users, Filter, MoreHorizontal, Eye, Edit, XCircle, MessageCircle,
+  Search, Users, Filter, MoreHorizontal, Eye, Edit, XCircle, MessageCircle, Loader2,
 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -32,19 +33,8 @@ interface Subscriber {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Mock data                                                          */
+/*  Config                                                             */
 /* ------------------------------------------------------------------ */
-
-const SUBSCRIBERS: Subscriber[] = [
-  { id: "1", name: "שרה כהן",      phone: "054-1234567", email: "sara@email.com",     status: "active",    plan: "חודשי",  joinedAt: "2026-01-15" },
-  { id: "2", name: "דוד לוי",      phone: "052-9876543", email: "david@email.com",    status: "active",    plan: "שנתי",   joinedAt: "2025-11-02" },
-  { id: "3", name: "רחל מזרחי",    phone: "050-5551234", email: "rachel@email.com",   status: "cancelled", plan: "חודשי",  joinedAt: "2025-09-20" },
-  { id: "4", name: "יעקב אברהם",   phone: "053-7778899", email: "yaakov@email.com",   status: "trial",     plan: "ניסיון", joinedAt: "2026-04-10" },
-  { id: "5", name: "מרים גולדשטיין", phone: "058-3334455", email: "miriam@email.com",  status: "active",    plan: "שנתי",   joinedAt: "2025-12-01" },
-  { id: "6", name: "אברהם פרידמן",  phone: "054-6667788", email: "avraham@email.com",  status: "failed",    plan: "חודשי",  joinedAt: "2026-02-14" },
-  { id: "7", name: "חנה ברקוביץ׳",  phone: "052-1112233", email: "chana@email.com",    status: "trial",     plan: "ניסיון", joinedAt: "2026-04-12" },
-  { id: "8", name: "משה שמעוני",    phone: "050-4445566", email: "moshe@email.com",    status: "active",    plan: "חודשי",  joinedAt: "2026-03-05" },
-]
 
 const STATUS_CONFIG: Record<SubscriberStatus, { label: string; className: string }> = {
   active:    { label: "פעיל",    className: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400" },
@@ -68,25 +58,98 @@ const FILTER_OPTIONS: { value: SubscriberStatus | "all"; label: string }[] = [
 export default function SubscribersPage() {
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState<SubscriberStatus | "all">("all")
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({ total: 0, active: 0, trial: 0, cancelledThisMonth: 0 })
 
-  const filtered = SUBSCRIBERS.filter((s) => {
-    const matchesSearch =
-      !search ||
-      s.name.includes(search) ||
-      s.phone.includes(search) ||
-      s.email.toLowerCase().includes(search.toLowerCase())
-    const matchesFilter = filter === "all" || s.status === filter
-    return matchesSearch && matchesFilter
-  })
+  const fetchSubscribers = useCallback(async () => {
+    setLoading(true)
+    const supabase = createClient()
 
-  const stats = {
-    total: SUBSCRIBERS.length,
-    active: SUBSCRIBERS.filter((s) => s.status === "active").length,
-    trial: SUBSCRIBERS.filter((s) => s.status === "trial").length,
-    cancelledThisMonth: SUBSCRIBERS.filter(
-      (s) => s.status === "cancelled" && s.joinedAt >= "2026-04-01"
-    ).length,
-  }
+    // Build query — profiles joined with latest subscription for plan info
+    let query = supabase
+      .from("profiles")
+      .select("id, full_name, phone, email, subscription_status, created_at, subscriptions(plan_id, amount, plans(name))")
+      .order("created_at", { ascending: false })
+
+    // Apply status filter at DB level
+    if (filter !== "all") {
+      query = query.eq("subscription_status", filter)
+    }
+
+    // Apply search at DB level
+    if (search.trim()) {
+      // Use or filter for name, phone, email
+      query = query.or(
+        `full_name.ilike.%${search.trim()}%,phone.ilike.%${search.trim()}%,email.ilike.%${search.trim()}%`
+      )
+    }
+
+    const { data, error } = await query.limit(200)
+
+    if (!error && data) {
+      const mapped: Subscriber[] = data.map((p: any) => {
+        const latestSub = Array.isArray(p.subscriptions) && p.subscriptions.length > 0
+          ? p.subscriptions[p.subscriptions.length - 1]
+          : null
+        const planName = latestSub?.plans?.name || (p.subscription_status === "trial" ? "ניסיון" : "---")
+
+        // Map subscription_status to our display status
+        let status: SubscriberStatus = "active"
+        if (p.subscription_status === "cancelled") status = "cancelled"
+        else if (p.subscription_status === "trial" || p.subscription_status === "free") status = "trial"
+        else if (p.subscription_status === "failed") status = "failed"
+        else if (p.subscription_status === "expired") status = "cancelled"
+
+        return {
+          id: p.id,
+          name: p.full_name || "---",
+          phone: p.phone || "---",
+          email: p.email || "---",
+          status,
+          plan: planName,
+          joinedAt: p.created_at,
+        }
+      })
+      setSubscribers(mapped)
+    }
+    setLoading(false)
+  }, [search, filter])
+
+  // Fetch stats separately (always full counts, not affected by filters)
+  useEffect(() => {
+    const supabase = createClient()
+
+    async function fetchStats() {
+      const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()
+
+      const [totalRes, activeRes, trialRes, cancelledRes] = await Promise.all([
+        supabase.from("profiles").select("id", { count: "exact", head: true }),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).eq("subscription_status", "active"),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).in("subscription_status", ["trial", "free"]),
+        supabase.from("subscriptions").select("id", { count: "exact", head: true })
+          .eq("status", "cancelled")
+          .gte("updated_at", monthStart),
+      ])
+
+      setStats({
+        total: totalRes.count ?? 0,
+        active: activeRes.count ?? 0,
+        trial: trialRes.count ?? 0,
+        cancelledThisMonth: cancelledRes.count ?? 0,
+      })
+    }
+
+    fetchStats()
+  }, [])
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchSubscribers()
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [fetchSubscribers])
 
   return (
     <div className="space-y-6">
@@ -163,6 +226,12 @@ export default function SubscribersPage() {
       {/* Table */}
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <span className="mr-2 text-muted-foreground">טוען...</span>
+          </div>
+        ) : (
         <Table>
           <TableHeader>
             <TableRow>
@@ -176,14 +245,14 @@ export default function SubscribersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 && (
+            {subscribers.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   לא נמצאו מנויים
                 </TableCell>
               </TableRow>
             )}
-            {filtered.map((sub) => {
+            {subscribers.map((sub) => {
               const statusCfg = STATUS_CONFIG[sub.status]
               return (
                 <TableRow key={sub.id}>
@@ -230,6 +299,7 @@ export default function SubscribersPage() {
             })}
           </TableBody>
         </Table>
+        )}
         </div>
       </Card>
     </div>

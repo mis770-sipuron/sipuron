@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -9,8 +9,9 @@ import {
   Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
 } from "@/components/ui/select"
 import {
-  Search, Plus, Edit, Trash2, Clock, Lock, BookOpen, Users, Filter,
+  Search, Plus, Edit, Trash2, Clock, Lock, BookOpen, Users, Filter, Loader2,
 } from "lucide-react"
+import { createClient } from "@/lib/supabase/client"
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -29,67 +30,17 @@ interface Story {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Mock data                                                          */
+/*  Gradient pool                                                      */
 /* ------------------------------------------------------------------ */
 
-const STORIES: Story[] = [
-  {
-    id: "1",
-    title: "תולעת השמיר",
-    category: "מדרש",
-    duration: 8,
-    premium: true,
-    status: "published",
-    gradient: "from-amber-400 via-orange-400 to-amber-600",
-  },
-  {
-    id: "2",
-    title: "השקט שלימד להקשיב",
-    category: "מידות",
-    duration: 5,
-    premium: false,
-    status: "published",
-    gradient: "from-orange-300 via-amber-400 to-yellow-500",
-  },
-  {
-    id: "3",
-    title: "מושקה והגן הקסום",
-    category: "דמיון",
-    duration: 12,
-    premium: true,
-    status: "published",
-    gradient: "from-yellow-400 via-amber-500 to-orange-500",
-  },
-  {
-    id: "4",
-    title: "האריה והנמלה",
-    category: "משלים",
-    duration: 6,
-    premium: false,
-    status: "draft",
-    gradient: "from-amber-500 via-orange-500 to-red-400",
-  },
-  {
-    id: "5",
-    title: "רבי עקיבא ורחל",
-    category: "גדולי ישראל",
-    duration: 15,
-    premium: true,
-    status: "published",
-    gradient: "from-orange-400 via-amber-500 to-yellow-400",
-  },
-  {
-    id: "6",
-    title: "הרפתקה בסוכה",
-    category: "חגים",
-    duration: 7,
-    premium: false,
-    status: "draft",
-    gradient: "from-yellow-500 via-orange-400 to-amber-500",
-  },
+const GRADIENTS = [
+  "from-amber-400 via-orange-400 to-amber-600",
+  "from-orange-300 via-amber-400 to-yellow-500",
+  "from-yellow-400 via-amber-500 to-orange-500",
+  "from-amber-500 via-orange-500 to-red-400",
+  "from-orange-400 via-amber-500 to-yellow-400",
+  "from-yellow-500 via-orange-400 to-amber-500",
 ]
-
-const CATEGORIES = ["הכל", "מדרש", "מידות", "דמיון", "משלים", "גדולי ישראל", "חגים"]
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                          */
@@ -99,19 +50,139 @@ export default function StoriesPage() {
   const [categoryFilter, setCategoryFilter] = useState("הכל")
   const [statusFilter, setStatusFilter] = useState<"all" | StoryStatus>("all")
   const [premiumOnly, setPremiumOnly] = useState(false)
+  const [stories, setStories] = useState<Story[]>([])
+  const [categories, setCategories] = useState<string[]>(["הכל"])
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({ total: 0, published: 0, draft: 0, premium: 0 })
 
-  const filtered = STORIES.filter((s) => {
-    const matchesCategory = categoryFilter === "הכל" || s.category === categoryFilter
-    const matchesStatus = statusFilter === "all" || s.status === statusFilter
-    const matchesPremium = !premiumOnly || s.premium
-    return matchesCategory && matchesStatus && matchesPremium
-  })
+  // Fetch categories once
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from("story_categories")
+      .select("name")
+      .order("sort_order", { ascending: true })
+      .then(({ data }) => {
+        if (data) {
+          setCategories(["הכל", ...data.map((c: { name: string }) => c.name)])
+        }
+      })
+  }, [])
 
-  const stats = {
-    total: STORIES.length,
-    published: STORIES.filter((s) => s.status === "published").length,
-    draft: STORIES.filter((s) => s.status === "draft").length,
-    premium: STORIES.filter((s) => s.premium).length,
+  // Fetch stats (unfiltered counts)
+  useEffect(() => {
+    const supabase = createClient()
+
+    async function fetchStats() {
+      const [totalRes, publishedRes, draftRes, premiumRes] = await Promise.all([
+        supabase.from("stories").select("id", { count: "exact", head: true }),
+        supabase.from("stories").select("id", { count: "exact", head: true }).eq("status", "published"),
+        supabase.from("stories").select("id", { count: "exact", head: true }).eq("status", "draft"),
+        supabase.from("stories").select("id", { count: "exact", head: true }).eq("is_premium", true),
+      ])
+
+      setStats({
+        total: totalRes.count ?? 0,
+        published: publishedRes.count ?? 0,
+        draft: draftRes.count ?? 0,
+        premium: premiumRes.count ?? 0,
+      })
+    }
+
+    fetchStats()
+  }, [])
+
+  // Fetch stories with filters
+  const fetchStories = useCallback(async () => {
+    setLoading(true)
+    const supabase = createClient()
+
+    // Get stories with their categories via the M2M table
+    let query = supabase
+      .from("stories")
+      .select("id, title, duration_seconds, is_premium, status, story_category_map(story_categories(name))")
+      .order("sort_order", { ascending: true })
+
+    if (statusFilter !== "all") {
+      query = query.eq("status", statusFilter)
+    }
+
+    if (premiumOnly) {
+      query = query.eq("is_premium", true)
+    }
+
+    const { data, error } = await query.limit(200)
+
+    if (!error && data) {
+      let mapped: Story[] = data.map((s: any, i: number) => {
+        // Extract first category name from the nested join
+        const catMaps = s.story_category_map || []
+        const categoryName = catMaps.length > 0 && catMaps[0].story_categories
+          ? catMaps[0].story_categories.name
+          : "---"
+
+        return {
+          id: s.id,
+          title: s.title,
+          category: categoryName,
+          duration: Math.round((s.duration_seconds || 0) / 60),
+          premium: s.is_premium,
+          status: s.status as StoryStatus,
+          gradient: GRADIENTS[i % GRADIENTS.length],
+        }
+      })
+
+      // Apply category filter client-side (since it's a M2M join)
+      if (categoryFilter !== "הכל") {
+        mapped = mapped.filter((s) => s.category === categoryFilter)
+      }
+
+      setStories(mapped)
+    }
+    setLoading(false)
+  }, [statusFilter, premiumOnly, categoryFilter])
+
+  useEffect(() => {
+    fetchStories()
+  }, [fetchStories])
+
+  // Toggle story status
+  async function toggleStatus(storyId: string, currentStatus: StoryStatus) {
+    const supabase = createClient()
+    const newStatus = currentStatus === "published" ? "draft" : "published"
+    const updateData: Record<string, any> = { status: newStatus }
+    if (newStatus === "published") {
+      updateData.published_at = new Date().toISOString()
+    }
+    const { error } = await supabase
+      .from("stories")
+      .update(updateData)
+      .eq("id", storyId)
+    if (!error) {
+      fetchStories()
+      // Update stats too
+      setStats((prev) => ({
+        ...prev,
+        published: prev.published + (newStatus === "published" ? 1 : -1),
+        draft: prev.draft + (newStatus === "draft" ? 1 : -1),
+      }))
+    }
+  }
+
+  // Toggle premium flag
+  async function togglePremium(storyId: string, currentPremium: boolean) {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from("stories")
+      .update({ is_premium: !currentPremium })
+      .eq("id", storyId)
+    if (!error) {
+      fetchStories()
+      setStats((prev) => ({
+        ...prev,
+        premium: prev.premium + (!currentPremium ? 1 : -1),
+      }))
+    }
   }
 
   return (
@@ -168,7 +239,7 @@ export default function StoriesPage() {
             <SelectValue placeholder="קטגוריה" />
           </SelectTrigger>
           <SelectContent>
-            {CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <SelectItem key={cat} value={cat}>
                 {cat}
               </SelectItem>
@@ -207,73 +278,92 @@ export default function StoriesPage() {
       </div>
 
       {/* Story cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.length === 0 && (
-          <div className="col-span-full text-center py-12 text-muted-foreground">
-            לא נמצאו סיפורים
-          </div>
-        )}
-        {filtered.map((story) => (
-          <Card key={story.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
-            {/* Cover gradient placeholder */}
-            <div className={`h-36 bg-gradient-to-br ${story.gradient} relative`}>
-              {/* Premium badge overlay */}
-              {story.premium && (
-                <div className="absolute top-3 left-3">
-                  <Badge className="bg-black/60 text-white backdrop-blur-sm border-0">
-                    <Lock className="h-3 w-3 ml-1" />
-                    פרימיום
-                  </Badge>
-                </div>
-              )}
-              {!story.premium && (
-                <div className="absolute top-3 left-3">
-                  <Badge variant="secondary" className="bg-white/80 text-foreground backdrop-blur-sm border-0">
-                    חינם
-                  </Badge>
-                </div>
-              )}
-              {/* Status */}
-              <div className="absolute top-3 right-3">
-                <Badge
-                  variant="secondary"
-                  className={
-                    story.status === "published"
-                      ? "bg-emerald-500/90 text-white border-0"
-                      : "bg-white/80 text-amber-700 border-0"
-                  }
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <span className="mr-2 text-muted-foreground">טוען...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {stories.length === 0 && (
+            <div className="col-span-full text-center py-12 text-muted-foreground">
+              לא נמצאו סיפורים
+            </div>
+          )}
+          {stories.map((story) => (
+            <Card key={story.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+              {/* Cover gradient placeholder */}
+              <div className={`h-36 bg-gradient-to-br ${story.gradient} relative`}>
+                {/* Premium badge overlay */}
+                {story.premium && (
+                  <button
+                    onClick={() => togglePremium(story.id, story.premium)}
+                    className="absolute top-3 left-3 cursor-pointer"
+                    title="לחץ להסרת פרימיום"
+                  >
+                    <Badge className="bg-black/60 text-white backdrop-blur-sm border-0">
+                      <Lock className="h-3 w-3 ml-1" />
+                      פרימיום
+                    </Badge>
+                  </button>
+                )}
+                {!story.premium && (
+                  <button
+                    onClick={() => togglePremium(story.id, story.premium)}
+                    className="absolute top-3 left-3 cursor-pointer"
+                    title="לחץ להפיכה לפרימיום"
+                  >
+                    <Badge variant="secondary" className="bg-white/80 text-foreground backdrop-blur-sm border-0">
+                      חינם
+                    </Badge>
+                  </button>
+                )}
+                {/* Status — clickable to toggle */}
+                <button
+                  onClick={() => toggleStatus(story.id, story.status)}
+                  className="absolute top-3 right-3 cursor-pointer"
+                  title={story.status === "published" ? "לחץ להעברה לטיוטה" : "לחץ לפרסום"}
                 >
-                  {story.status === "published" ? "מפורסם" : "טיוטה"}
-                </Badge>
-              </div>
-            </div>
-
-            {/* Card body */}
-            <div className="p-4 space-y-3">
-              <h3 className="text-lg font-bold text-foreground leading-tight">{story.title}</h3>
-
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge variant="outline">{story.category}</Badge>
-                <Badge variant="secondary" className="gap-1">
-                  <Clock className="h-3 w-3" />
-                  {story.duration} דק׳
-                </Badge>
+                  <Badge
+                    variant="secondary"
+                    className={
+                      story.status === "published"
+                        ? "bg-emerald-500/90 text-white border-0"
+                        : "bg-white/80 text-amber-700 border-0"
+                    }
+                  >
+                    {story.status === "published" ? "מפורסם" : "טיוטה"}
+                  </Badge>
+                </button>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-2 border-t border-border">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Edit className="h-3.5 w-3.5 ml-1.5" />
-                  עריכה
-                </Button>
-                <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
+              {/* Card body */}
+              <div className="p-4 space-y-3">
+                <h3 className="text-lg font-bold text-foreground leading-tight">{story.title}</h3>
+
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant="outline">{story.category}</Badge>
+                  <Badge variant="secondary" className="gap-1">
+                    <Clock className="h-3 w-3" />
+                    {story.duration} דק׳
+                  </Badge>
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center gap-2 pt-2 border-t border-border">
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <Edit className="h-3.5 w-3.5 ml-1.5" />
+                    עריכה
+                  </Button>
+                  <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

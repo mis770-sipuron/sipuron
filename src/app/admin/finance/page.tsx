@@ -174,7 +174,7 @@ const MONTH_OPTIONS = [
 /* ───────── Page ───────── */
 export default function FinanceDashboard() {
   /* ── Live/Mock state ── */
-  const [useLiveData, setUseLiveData] = useState(false)
+  const [useLiveData, setUseLiveData] = useState(true)
   const now = new Date()
   const defaultMonth = `${String(now.getMonth() + 1).padStart(2, "0")}${now.getFullYear()}`
   const [selectedMonth, setSelectedMonth] = useState(defaultMonth)
@@ -208,18 +208,18 @@ export default function FinanceDashboard() {
   const { sync, syncing, result: syncResult, error: syncError } = useSyncCardcom()
 
   // Determine connection status
-  const isConnected = useLiveData && !txError && !failError
-  const hasError = useLiveData && (!!txError || !!failError)
   const isLoading = txLoading || failLoading
+  const hasError = useLiveData && (!!txError || !!failError)
+  const isConnected = useLiveData && !isLoading && !hasError
 
   // Build transaction table from live data or fallback to mock
   const displayTransactions = useMemo(() => {
     if (!useLiveData || liveTransactions.length === 0) return recentTransactions
     return liveTransactions.map((tx) => ({
-      name: tx.CardOwnerName || "---",
+      name: tx.CouponNumber || tx.Last4DigitsStr || "---",
       amount: tx.Amount,
-      status: tx.StatusCode === 0 ? "הצליח" : "נכשל",
-      date: tx.TransactionDate?.slice(0, 10) || "",
+      status: tx.ActionCode === 1 ? "הצליח" : "נכשל",
+      date: tx.CreateDate?.slice(0, 10) || tx.TransacDate?.slice(0, 10) || "",
     }))
   }, [useLiveData, liveTransactions])
 

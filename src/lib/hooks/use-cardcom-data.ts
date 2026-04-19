@@ -36,7 +36,7 @@ export function useCardcomTransactions(
         throw new Error(body.error || `HTTP ${res.status}`)
       }
       const json = await res.json()
-      setData(json.Results ?? [])
+      setData(json.CreditCardTransactions ?? [])
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Unknown error"
       setError(msg)
@@ -78,7 +78,7 @@ export function useCardcomFailures(
         throw new Error(body.error || `HTTP ${res.status}`)
       }
       const json = await res.json()
-      setData(json.Results ?? [])
+      setData(json.SpecialTransactions ?? [])
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Unknown error"
       setError(msg)

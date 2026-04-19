@@ -8,6 +8,8 @@ import {
   useRef,
   useState,
 } from "react"
+import { useAuth } from "@/lib/hooks/use-auth"
+import { createClient } from "@/lib/supabase/client"
 
 export interface Story {
   id: string
@@ -51,6 +53,29 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [duration, setDuration] = useState(0)
   const [playbackRate, setPlaybackRate] = useState(1)
 
+  const { user } = useAuth()
+  const supabaseRef = useRef(createClient())
+
+  // Save progress to Supabase
+  const saveProgress = useCallback(
+    async (storyId: string, seconds: number, storyDuration: number) => {
+      if (!user) return
+      const completed = storyDuration > 0 && seconds >= storyDuration * 0.9
+      await supabaseRef.current.from("listening_history").upsert(
+        {
+          user_id: user.id,
+          story_id: storyId,
+          progress_seconds: Math.floor(seconds),
+          completed,
+          ...(completed ? { completed_at: new Date().toISOString() } : {}),
+          last_played_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,story_id" }
+      )
+    },
+    [user]
+  )
+
   // Initialize audio element once
   useEffect(() => {
     const audio = new Audio()
@@ -84,9 +109,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (isPlaying && currentStory) {
       saveIntervalRef.current = setInterval(() => {
-        console.log(
-          `[PlayerProvider] Saving progress: story=${currentStory.id}, time=${Math.floor(currentTime)}s`
-        )
+        const audio = audioRef.current
+        if (!audio) return
+        saveProgress(currentStory.id, audio.currentTime, audio.duration || currentStory.duration)
       }, 10_000)
     }
     return () => {
@@ -95,7 +120,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         saveIntervalRef.current = null
       }
     }
-  }, [isPlaying, currentStory, currentTime])
+  }, [isPlaying, currentStory, saveProgress])
 
   const play = useCallback((story: Story) => {
     const audio = audioRef.current

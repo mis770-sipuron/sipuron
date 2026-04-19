@@ -1,9 +1,8 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { type NextRequest } from "next/server"
+import { updateSession } from "@/lib/supabase/middleware"
 
 export async function middleware(request: NextRequest) {
-  // For now, allow all routes (auth protection will be added when login is built)
-  // Admin routes will be protected after auth system is complete
-  return NextResponse.next()
+  return await updateSession(request)
 }
 
 export const config = {

@@ -69,11 +69,11 @@ export async function POST(request: NextRequest) {
 
     // Fetch failed/special transactions
     const failData = await getFailedTransactions(fromDate, toDate);
-    const failCount = failData.Results?.length ?? 0;
+    const failCount = failData.SpecialTransactions?.length ?? 0;
     console.log(`[Cron] Fetched ${failCount} failed transactions`);
 
     if (failCount > 0) {
-      const failRows = failData.Results.map((tx) => ({
+      const failRows = failData.SpecialTransactions.map((tx: import("@/lib/cardcom/types").CardcomFailedTransaction) => ({
         transaction_id: tx.TransactionId,
         amount: tx.Amount,
         card_owner_name: tx.CardOwnerName,
