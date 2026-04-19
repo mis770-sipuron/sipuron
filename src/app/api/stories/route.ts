@@ -24,6 +24,18 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search");
     const limit = parseInt(searchParams.get("limit") || "50");
 
+    // Check if user is an active subscriber
+    const { data: { user } } = await supabase.auth.getUser();
+    let isActiveSubscriber = false;
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("subscription_status")
+        .eq("id", user.id)
+        .single();
+      isActiveSubscriber = profile?.subscription_status === "active" || profile?.subscription_status === "trial";
+    }
+
     let query = supabase
       .from("stories")
       .select(`
@@ -51,7 +63,15 @@ export async function GET(request: NextRequest) {
       return Response.json({ error: error.message }, { status: 500 });
     }
 
-    return Response.json({ stories: data });
+    // Strip audio_url from premium stories for non-subscribers
+    const stories = (data ?? []).map((story: any) => {
+      if (story.is_premium && !isActiveSubscriber) {
+        return { ...story, audio_url: null };
+      }
+      return story;
+    });
+
+    return Response.json({ stories });
   } catch (err) {
     console.error("[API] GET /api/stories error:", err);
     return Response.json(

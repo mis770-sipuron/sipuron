@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import {
   LayoutDashboard, Users, BookOpen, DollarSign,
   MessageSquare, Link as LinkIcon, Map, Settings,
-  BookOpen as Logo, ChevronRight, Menu, X
+  BookOpen as Logo, ChevronRight, Menu, X, UserPlus,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ThemeToggle } from "@/components/layout/theme-toggle"
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 const NAV_ITEMS = [
   { href: "/admin", label: "סקירה כללית", icon: LayoutDashboard },
   { href: "/admin/subscribers", label: "מנויים", icon: Users },
+  { href: "/admin/leads", label: "לידים", icon: UserPlus },
   { href: "/admin/stories", label: "סיפורים", icon: BookOpen },
   { href: "/admin/finance", label: "כספים", icon: DollarSign },
   { href: "/admin/messaging", label: "הודעות + בוט", icon: MessageSquare },
