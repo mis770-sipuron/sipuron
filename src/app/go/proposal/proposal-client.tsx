@@ -27,7 +27,7 @@ type Project = {
   icon: typeof Rocket
   impact: string
   replaces: string
-  category: "core" | "growth" | "content" | "future" | "special"
+  category: "core" | "growth" | "content" | "future" | "special" | "impact"
 }
 
 const ALL_PROJECTS: Project[] = [
@@ -202,6 +202,17 @@ const ALL_PROJECTS: Project[] = [
     originalPrice: 15000, weeks: 8, icon: Gamepad2, category: "special",
     impact: "מוצר חדש — שוק בר מצוות", replaces: "אין — מוצר חדש לגמרי",
   },
+
+  // ── Impact ──
+  {
+    id: "heroes-children",
+    name: "מיזם ילדי הגיבורים",
+    subtitle: "קהילה ייעודית ליתומי נפגעי איבה וחללי צה״ל — תוכן יומי, סיפורים מחזקים ומעטפת רגשית. ללא עלות. לתמיד.",
+    description: "בניית דף ייעודי, קבוצת WhatsApp סגורה, אוטומציות הרשמה (משפחה שכולה / מכיר משפחה / רוצה לתרום), חיבור לתוכן היומי של סיפורון, ליווי מקצועי בשיתוף אנשי טיפול. המיזם מוקדש לעילוי נשמת הקדוש שניאור זלמן כהן הי״ד.",
+    whyNow: "בשנה האחרונה כולנו מרגישים את הלב הפועם של עם ישראל. הילדים האלה איבדו אבא או אמא — ואנחנו יכולים לתת להם סיפור כל יום. זה הדבר הנכון לעשות.",
+    originalPrice: 0, weeks: 2, icon: Heart, category: "impact",
+    impact: "מותג עם לב — סיפורון נותן בחזרה", replaces: "אין — מיזם חדש",
+  },
 ]
 
 const MILESTONES = [
@@ -222,6 +233,7 @@ const ROADMAP = [
       { name: "החזרת מנויים — 417 משפחות שמחכות לחזור", status: "ready" as const },
       { name: "בוט קבוע הפניות — בוט שלא נסגר", status: "ready" as const },
       { name: "פלאו ברוכים הבאים — חוויית כניסה חכמה", status: "ready" as const },
+      { name: "🧡 מיזם ילדי הגיבורים — קהילה ליתומי נפגעי איבה וחללי צה״ל", status: "ready" as const },
     ],
   },
   {
@@ -268,6 +280,7 @@ const CAT_LABELS: Record<string, { label: string; color: string }> = {
   content: { label: "חוויה", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" },
   future: { label: "עתידי", color: "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400" },
   special: { label: "פרויקט מיוחד", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300" },
+  impact: { label: "🧡 השפעה", color: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" },
 }
 
 const RETAINER_ITEMS = [
@@ -297,7 +310,7 @@ function discountedPrice(original: number): number {
 
 export function ProposalClient() {
   const [selected, setSelected] = useState<Set<string>>(() =>
-    new Set(["campaign-flight", "automation", "dashboard", "winback", "evergreen", "onboarding"])
+    new Set(["campaign-flight", "automation", "dashboard", "winback", "evergreen", "onboarding", "heroes-children"])
   )
   const [order, setOrder] = useState<string[]>(ALL_PROJECTS.map(p => p.id))
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
@@ -350,7 +363,7 @@ export function ProposalClient() {
   const waMsg = encodeURIComponent(
     `אחי, הנה מה שבחרתי — לפי סדר עדיפויות:\n\n` +
     selectedProjects.map((p, i) =>
-      `${i + 1}. ${p.name} — ${fmtCurrency(discountedPrice(p.originalPrice))} (${p.weeks} שב')`
+      `${i + 1}. ${p.name} — ${p.originalPrice > 0 ? `${fmtCurrency(discountedPrice(p.originalPrice))} (${p.weeks} שב')` : "ללא עלות 🧡"}`
     ).join("\n") +
     `\n\nסה"כ פרויקטים: ${fmtCurrency(totalDiscounted)} (אחרי הנחה 30%)` +
     `\nחסכת: ${fmtCurrency(totalSaved)}` +
@@ -696,12 +709,20 @@ export function ProposalClient() {
                   {/* Price with discount */}
                   <div className="flex-shrink-0 text-left flex items-center gap-2">
                     <div className="flex flex-col items-end">
-                      <div className="text-xs text-muted-foreground line-through">
-                        {fmtCurrency(p.originalPrice)}
-                      </div>
-                      <div className={`text-lg sm:text-2xl font-extrabold ${isSel ? "text-primary" : "text-muted-foreground"}`}>
-                        {fmtCurrency(discounted)}
-                      </div>
+                      {p.originalPrice > 0 ? (
+                        <>
+                          <div className="text-xs text-muted-foreground line-through">
+                            {fmtCurrency(p.originalPrice)}
+                          </div>
+                          <div className={`text-lg sm:text-2xl font-extrabold ${isSel ? "text-primary" : "text-muted-foreground"}`}>
+                            {fmtCurrency(discounted)}
+                          </div>
+                        </>
+                      ) : (
+                        <div className={`text-lg sm:text-2xl font-extrabold ${isSel ? "text-orange-500" : "text-muted-foreground"}`}>
+                          ללא עלות
+                        </div>
+                      )}
                     </div>
                     <button onClick={() => toggleExpand(p.id)} className="p-1">
                       {isExp ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
@@ -720,9 +741,11 @@ export function ProposalClient() {
                     <div className="flex flex-wrap gap-4 text-xs">
                       <span className="text-emerald-600 dark:text-emerald-400"><strong>תוצאה:</strong> {p.impact}</span>
                       <span className="text-slate-500 dark:text-slate-400"><strong>מחליף:</strong> {p.replaces}</span>
-                      <span className="text-amber-600 dark:text-amber-400">
-                        <strong>חסכת:</strong> {fmtCurrency(saved)} ({Math.round(DISCOUNT * 100)}% הנחה)
-                      </span>
+                      {saved > 0 && (
+                        <span className="text-amber-600 dark:text-amber-400">
+                          <strong>חסכת:</strong> {fmtCurrency(saved)} ({Math.round(DISCOUNT * 100)}% הנחה)
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
@@ -921,6 +944,67 @@ export function ProposalClient() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ═══════════════════ HEROES CHILDREN ═══════════════════ */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+        <div className="rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950/20 dark:via-amber-950/20 dark:to-yellow-950/20 border-2 border-orange-200 dark:border-orange-800/30 p-8 sm:p-10 text-center">
+          <div className="text-5xl mb-4">🧡</div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">
+            ויש עוד משהו שקרוב ללב
+          </h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
+            בשנה האחרונה כולנו מרגישים את הלב הפועם של עם ישראל.
+            <br />
+            ילדים שאיבדו אבא או אמא — אלה שהקריבו את היקר מכל למעננו.
+          </p>
+
+          <div className="rounded-xl bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm p-6 mb-6 text-right max-w-xl mx-auto">
+            <p className="text-sm text-foreground leading-relaxed">
+              <strong>מיזם &quot;סיפורון עם ילדי הגיבורים&quot;</strong> — קהילה ייעודית וסגורה ליתומי נפגעי פעולות איבה ויתומי חללי צה״ל.
+              תוכן יומי, סיפורים מחזקים ומעטפת רגשית.
+              <strong> ללא עלות. לתמיד.</strong>
+            </p>
+            <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 text-orange-500" />
+                סיפור יומי
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Users className="h-3.5 w-3.5 text-orange-500" />
+                מעטפת רגשית
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Shield className="h-3.5 w-3.5 text-orange-500" />
+                ליווי מקצועי
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Gift className="h-3.5 w-3.5 text-orange-500" />
+                ללא עלות, לתמיד
+              </span>
+            </div>
+          </div>
+
+          <p className="text-sm text-muted-foreground mb-6 max-w-lg mx-auto leading-relaxed">
+            המיזם הזה עליי — בלי עלות. בניית הדף, הקבוצה, האוטומציות.
+            <br />
+            כי כשאני מסתכל על הילדים האלה — אני יודע שזה הדבר הנכון לעשות.
+          </p>
+
+          <a
+            href="https://sipuron.lovable.app/heroes-children"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-gradient-to-l from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold px-6 py-3 rounded-xl text-sm shadow-lg hover:shadow-xl transition-all"
+          >
+            <Heart className="h-4 w-4" />
+            לצפייה בדף המיזם
+          </a>
+
+          <p className="mt-4 text-[10px] text-muted-foreground">
+            המיזם מוקדש לעילוי נשמת הקדוש שניאור זלמן כהן הי״ד
+          </p>
         </div>
       </section>
 
