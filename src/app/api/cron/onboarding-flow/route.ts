@@ -114,9 +114,11 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const DRY_RUN = process.env.ONBOARDING_DRY_RUN === "true";
   const now = new Date();
-  const results = { processed: 0, sent: 0, errors: 0, skipped: 0 };
+  const results = { processed: 0, sent: 0, errors: 0, skipped: 0, dry_run: DRY_RUN };
   const log: string[] = [];
+  if (DRY_RUN) log.push("🧪 DRY RUN — no messages sent, no DB writes");
 
   // Fetch all subscriptions that need processing
   const statuses = ["trial", "dunning", "cancelled"];
@@ -183,6 +185,12 @@ export async function POST(request: NextRequest) {
           : "",
         rejoin_link: buildRejoiningLink(),
       });
+
+      if (DRY_RUN) {
+        results.sent++;
+        log.push(`🧪 WOULD SEND to ${sub.first_name} (${phone}) ← ${transition.send}\n${message.slice(0, 80)}...`);
+        continue;
+      }
 
       const chatId = toChatId(phone);
       await sendMessage(chatId, message);
