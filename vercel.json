@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/daily-dashboard",
       "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/onboarding-flow",
+      "schedule": "0 6 * * *"
     }
   ]
 }
