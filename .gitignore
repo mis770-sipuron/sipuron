@@ -50,3 +50,5 @@ bot/config.json
 bot/bot.js
 bot/package-lock.json
 docs/plans/2026-04-16-data-pipeline.md
+
+.mcp.json
